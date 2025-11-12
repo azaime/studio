@@ -35,6 +35,10 @@ const pageTitles: { [key: string]: string } = {
   radiography: 'Radiographie',
   ultrasound: 'Échographie',
   users: 'Utilisateurs',
+  medicine: 'Médecine',
+  personnel: 'Personnel',
+  administration: 'Administration',
+  profile: 'Profil',
 };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -76,6 +80,7 @@ export function Header() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Compte Admin</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild><Link href="/profile">Profil</Link></DropdownMenuItem>
             <DropdownMenuItem>Paramètres</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />

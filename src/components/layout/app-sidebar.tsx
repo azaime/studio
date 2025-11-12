@@ -32,6 +32,10 @@ import {
   Scissors,
   Scan,
   Radio,
+  HeartPulse,
+  UsersRound,
+  Building,
+  User
 } from "lucide-react"
 import { Button } from "../ui/button"
 
@@ -40,6 +44,7 @@ const navItems = [
   { href: "/patients", icon: Users, label: "Patients" },
   { href: "/appointments", icon: Calendar, label: "Rendez-vous" },
   { href: "/emergency", icon: Siren, label: "Urgences" },
+  { href: "/medicine", icon: HeartPulse, label: "Médecine" },
   { href: "/lab", icon: FlaskConical, label: "Labo" },
   { href: "/pharmacy", icon: Pill, label: "Pharmacie" },
   { href: "/maternity", icon: HeartHandshake, label: "Maternité" },
@@ -50,7 +55,11 @@ const navItems = [
   { href: "/radiography", icon: Scan, label: "Radiographie" },
   { href: "/ultrasound", icon: Radio, label: "Échographie" },
   { href: "/users", icon: UserPlus, label: "Utilisateurs" },
+  { href: "/personnel", icon: UsersRound, label: "Personnel" },
+  { href: "/administration", icon: Building, label: "Administration" },
 ]
+
+const profileItem = { href: "/profile", icon: User, label: "Profil" };
 
 export function AppSidebar() {
   const pathname = usePathname()
@@ -84,6 +93,18 @@ export function AppSidebar() {
                 <SidebarMenuButton tooltip="Paramètres">
                     <Settings />
                     <span>Paramètres</span>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === profileItem.href}
+                  tooltip={profileItem.label}
+                >
+                  <Link href={profileItem.href}>
+                    <profileItem.icon />
+                    <span>{profileItem.label}</span>
+                  </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
