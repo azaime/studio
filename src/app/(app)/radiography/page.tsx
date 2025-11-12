@@ -1,9 +1,43 @@
+
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload, ListOrdered, FileSearch, PlusCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 export default function RadiographyPage() {
+  const { toast } = useToast();
+
+  const handleNewRequest = () => {
+    toast({
+      title: "Fonctionnalité à venir",
+      description: "La création de nouvelles demandes sera bientôt disponible.",
+    });
+  };
+
+  const handleUploadPrescription = () => {
+    toast({
+      title: "Fonctionnalité à venir",
+      description: "Le téléchargement d'ordonnances sera bientôt disponible.",
+    });
+  };
+
+  const handleManageQueue = () => {
+    toast({
+      title: "Fonctionnalité à venir",
+      description: "La gestion de la file d'attente sera bientôt disponible.",
+    });
+  };
+
+  const handleSearchExams = () => {
+    toast({
+      title: "Fonctionnalité à venir",
+      description: "La recherche dans les archives sera bientôt disponible.",
+    });
+  };
+
   return (
     <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -11,7 +45,7 @@ export default function RadiographyPage() {
                 <h1 className="text-2xl font-bold tracking-tight">Service de Radiographie</h1>
                 <p className="text-muted-foreground">Gestion des examens d'imagerie par rayons X.</p>
             </div>
-            <Button>
+            <Button onClick={handleNewRequest}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Nouvelle demande
             </Button>
@@ -24,7 +58,7 @@ export default function RadiographyPage() {
             </CardHeader>
             <CardContent className="space-y-4">
                  <Input placeholder="Nom du patient ou ID" />
-                 <Button className="w-full">
+                 <Button className="w-full" onClick={handleUploadPrescription}>
                     <Upload className="mr-2 h-4 w-4" />
                     Télécharger l'ordonnance
                  </Button>
@@ -39,7 +73,7 @@ export default function RadiographyPage() {
                 </CardHeader>
                 <CardContent>
                     <p>3 patients en attente.</p>
-                    <Button variant="secondary" className="mt-4">
+                    <Button variant="secondary" className="mt-4" onClick={handleManageQueue}>
                         <ListOrdered className="mr-2 h-4 w-4" />
                         Gérer la file
                     </Button>
@@ -52,7 +86,7 @@ export default function RadiographyPage() {
                 </CardHeader>
                 <CardContent>
                     <p>Consultez les radiographies archivées.</p>
-                    <Button variant="outline" className="mt-4">
+                    <Button variant="outline" className="mt-4" onClick={handleSearchExams}>
                         <FileSearch className="mr-2 h-4 w-4" />
                         Rechercher un examen
                     </Button>
