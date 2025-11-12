@@ -1,3 +1,6 @@
+
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Table,
@@ -9,6 +12,7 @@ import {
   } from "@/components/ui/table"
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const ultrasoundSchedule = [
     { time: "09:00", patient: "Fatou Kiné", exam: "Échographie abdominale" },
@@ -18,6 +22,15 @@ const ultrasoundSchedule = [
 ]
 
 export default function UltrasoundPage() {
+  const { toast } = useToast();
+
+  const handleAddExam = () => {
+    toast({
+        title: "Fonctionnalité à venir",
+        description: "L'ajout d'examens d'échographie sera bientôt disponible.",
+    });
+  }
+
   return (
     <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -25,7 +38,7 @@ export default function UltrasoundPage() {
                 <h1 className="text-2xl font-bold tracking-tight">Service d'Échographie</h1>
                 <p className="text-muted-foreground">Agenda du jour pour les examens d'échographie médicale.</p>
             </div>
-            <Button>
+            <Button onClick={handleAddExam}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Ajouter un examen
             </Button>
