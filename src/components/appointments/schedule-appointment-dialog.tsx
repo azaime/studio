@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ import type { Patient, Appointment } from '@/lib/types';
 import { fetchAppointmentSuggestions } from '@/lib/actions';
 import { Calendar as CalendarIcon, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 type Doctor = { id: string; name: string };
@@ -26,9 +26,10 @@ interface ScheduleAppointmentDialogProps {
   patients: Patient[];
   doctors: Doctor[];
   onAppointmentScheduled: (newAppointment: Omit<Appointment, 'id' | 'status'>) => void;
+  appointment?: Appointment;
 }
 
-export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctors, onAppointmentScheduled }: ScheduleAppointmentDialogProps) {
+export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctors, onAppointmentScheduled, appointment }: ScheduleAppointmentDialogProps) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -39,6 +40,20 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
   const [doctorId, setDoctorId] = useState('');
   const [appointmentType, setAppointmentType] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  
+  const isRescheduling = !!appointment;
+
+  useEffect(() => {
+    if (appointment && open) {
+        setPatientId(appointment.patientId);
+        const doctor = doctors.find(d => d.name === appointment.doctorName);
+        if (doctor) setDoctorId(doctor.id);
+        setAppointmentType(appointment.service);
+        // Ensure date is parsed correctly from 'yyyy-MM-dd' string
+        setDate(parseISO(appointment.date));
+        setSelectedTime(appointment.time);
+    }
+  }, [appointment, open, doctors]);
 
   const handleGetSuggestions = () => {
     if (!patientId || !doctorId || !appointmentType || !date) {
@@ -99,12 +114,14 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
     });
 
     toast({
-      title: "Rendez-vous programmé",
-      description: `Le rendez-vous pour ${patient.name} a été programmé le ${format(date, 'PPP', { locale: fr })} à ${selectedTime}.`,
+      title: isRescheduling ? "Rendez-vous replanifié" : "Rendez-vous programmé",
+      description: `Le rendez-vous pour ${patient.name} a été mis à jour pour le ${format(date, 'PPP', { locale: fr })} à ${selectedTime}.`,
     });
-    onOpenChange(false);
     
-    // Reset state
+    handleOpenChange(false);
+  };
+
+  const resetState = () => {
     setSuggestions([]);
     setPatientId('');
     setDoctorId('');
@@ -112,19 +129,13 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
     setSelectedTime('');
     setDate(new Date());
     setError(null);
-  };
+  }
 
   const handleOpenChange = (isOpen: boolean) => {
     onOpenChange(isOpen);
     if (!isOpen) {
-        // Reset state when closing
-        setSuggestions([]);
-        setPatientId('');
-        setDoctorId('');
-        setAppointmentType('');
-        setSelectedTime('');
-        setDate(new Date());
-        setError(null);
+        // Reset state only when closing
+        resetState();
     }
   }
 
@@ -133,15 +144,15 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Planifier un nouveau rendez-vous</DialogTitle>
+            <DialogTitle>{isRescheduling ? "Replanifier le rendez-vous" : "Planifier un nouveau rendez-vous"}</DialogTitle>
             <DialogDescription>
-              Utilisez l'assistant IA pour trouver les meilleurs créneaux horaires.
+              {isRescheduling ? "Mettez à jour les détails du rendez-vous ci-dessous." : "Utilisez l'assistant IA pour trouver les meilleurs créneaux horaires."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="patient">Patient</Label>
-              <Select onValueChange={setPatientId} value={patientId}>
+              <Select onValueChange={setPatientId} value={patientId} disabled={isRescheduling}>
                 <SelectTrigger><SelectValue placeholder="Sélectionnez un patient" /></SelectTrigger>
                 <SelectContent>
                   {patients.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
@@ -184,7 +195,7 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
 
             {isPending && <div className="text-center text-sm text-muted-foreground flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Pensée...</div>}
 
-            {suggestions.length > 0 && !isPending && (
+            {(suggestions.length > 0 || (isRescheduling && selectedTime)) && !isPending && (
               <div className="space-y-2 rounded-lg border p-4 bg-secondary/50">
                 <Label>Horaires suggérés</Label>
                 <RadioGroup onValueChange={setSelectedTime} value={selectedTime}>
@@ -195,13 +206,19 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
                         <Label htmlFor={time} className="ml-2 cursor-pointer">{time}</Label>
                       </div>
                     ))}
+                    {isRescheduling && !suggestions.includes(selectedTime) && selectedTime && (
+                       <div key={selectedTime} className="flex items-center">
+                        <RadioGroupItem value={selectedTime} id={selectedTime} />
+                        <Label htmlFor={selectedTime} className="ml-2 cursor-pointer">{selectedTime} (Actuel)</Label>
+                      </div>
+                    )}
                   </div>
                 </RadioGroup>
               </div>
             )}
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={!selectedTime}>Planifier le rendez-vous</Button>
+            <Button type="submit" disabled={!selectedTime}>{isRescheduling ? "Replanifier" : "Planifier le rendez-vous"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -13,14 +13,20 @@ import { patients, doctors } from "@/lib/data";
 import { ScheduleAppointmentDialog } from './schedule-appointment-dialog';
 import { cn } from '@/lib/utils';
 import type { Appointment } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 interface AppointmentListProps {
     appointments: Appointment[];
     addAppointment: (newAppointment: Omit<Appointment, 'id' | 'status'>) => void;
+    updateAppointment: (updatedAppointment: Appointment) => void;
+    cancelAppointment: (appointmentId: string) => void;
 }
 
-export function AppointmentList({ appointments, addAppointment }: AppointmentListProps) {
+export function AppointmentList({ appointments, addAppointment, updateAppointment, cancelAppointment }: AppointmentListProps) {
     const [isScheduling, setIsScheduling] = useState(false);
+    const [selectedAppointment, setSelectedAppointment] = useState<Appointment | undefined>(undefined);
+    const { toast } = useToast();
+
 
     const getStatusVariant = (status: 'Programmé' | 'Terminé' | 'Annulé') => {
         switch (status) {
@@ -30,6 +36,32 @@ export function AppointmentList({ appointments, addAppointment }: AppointmentLis
             default: return 'outline';
         }
     }
+
+    const handleReschedule = (appointment: Appointment) => {
+        setSelectedAppointment(appointment);
+        setIsScheduling(true);
+    }
+    
+    const handleCloseDialog = () => {
+        setIsScheduling(false);
+        setSelectedAppointment(undefined);
+    }
+
+    const handleAppointmentScheduled = (newAppointmentData: Omit<Appointment, 'id' | 'status'>) => {
+        if (selectedAppointment) {
+            updateAppointment({ ...selectedAppointment, ...newAppointmentData });
+        } else {
+            addAppointment(newAppointmentData);
+        }
+    }
+
+    const handleViewDetails = (appointment: Appointment) => {
+        toast({
+            title: "Détails du rendez-vous",
+            description: `Patient: ${appointment.patientName}, Docteur: ${appointment.doctorName}, Service: ${appointment.service}, le ${appointment.date} à ${appointment.time}. Statut: ${appointment.status}`
+        })
+    }
+
 
   return (
     <>
@@ -65,7 +97,7 @@ export function AppointmentList({ appointments, addAppointment }: AppointmentLis
               </TableHeader>
               <TableBody>
                 {appointments.map((appointment) => (
-                  <TableRow key={appointment.id}>
+                  <TableRow key={appointment.id} data-state={appointment.status === 'Annulé' ? 'disabled' : ''}>
                     <TableCell className="font-medium">{appointment.patientName}</TableCell>
                     <TableCell>{appointment.doctorName}</TableCell>
                     <TableCell>{appointment.service}</TableCell>
@@ -76,16 +108,17 @@ export function AppointmentList({ appointments, addAppointment }: AppointmentLis
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                          <Button aria-haspopup="true" size="icon" variant="ghost" disabled={appointment.status === 'Annulé'}>
                             <MoreHorizontal className="h-4 w-4" />
                             <span className="sr-only">Menu</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Voir les détails</DropdownMenuItem>
-                          <DropdownMenuItem>Replanifier</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Annuler</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleViewDetails(appointment)}>Voir les détails</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleReschedule(appointment)}>Replanifier</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive" onClick={() => cancelAppointment(appointment.id)}>Annuler</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -96,7 +129,14 @@ export function AppointmentList({ appointments, addAppointment }: AppointmentLis
           </div>
         </CardContent>
       </Card>
-      <ScheduleAppointmentDialog open={isScheduling} onOpenChange={setIsScheduling} patients={patients} doctors={doctors} onAppointmentScheduled={addAppointment} />
+      <ScheduleAppointmentDialog 
+        open={isScheduling} 
+        onOpenChange={handleCloseDialog} 
+        patients={patients} 
+        doctors={doctors} 
+        onAppointmentScheduled={handleAppointmentScheduled}
+        appointment={selectedAppointment}
+       />
     </>
   );
 }
