@@ -1,12 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, BarChart, Settings } from "lucide-react";
+import { Download, BarChart, Settings, PlusCircle } from "lucide-react";
 
 export default function AdministrationPage() {
   return (
     <div className="space-y-6">
-        <h1 className="text-2xl font-bold tracking-tight">Administration</h1>
-        <p className="text-muted-foreground">Outils et rapports pour l'administration de l'hôpital.</p>
+        <div className="flex justify-between items-center">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight">Administration</h1>
+                <p className="text-muted-foreground">Outils et rapports pour l'administration de l'hôpital.</p>
+            </div>
+            <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Ajouter une tâche
+            </Button>
+        </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <Card>
                 <CardHeader>

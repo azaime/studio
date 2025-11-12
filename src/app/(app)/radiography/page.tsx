@@ -1,13 +1,21 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, ListOrdered, FileSearch } from "lucide-react";
+import { Upload, ListOrdered, FileSearch, PlusCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export default function RadiographyPage() {
   return (
     <div className="space-y-6">
-        <h1 className="text-2xl font-bold tracking-tight">Service de Radiographie</h1>
-        <p className="text-muted-foreground">Gestion des examens d'imagerie par rayons X.</p>
+        <div className="flex justify-between items-center">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight">Service de Radiographie</h1>
+                <p className="text-muted-foreground">Gestion des examens d'imagerie par rayons X.</p>
+            </div>
+            <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Nouvelle demande
+            </Button>
+        </div>
         
         <Card>
             <CardHeader>

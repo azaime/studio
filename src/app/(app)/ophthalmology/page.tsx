@@ -5,10 +5,18 @@ import { Eye, PlusCircle, List } from "lucide-react";
 export default function OphthalmologyPage() {
   return (
     <div className="space-y-6">
-        <h1 className="text-2xl font-bold tracking-tight">Service d'Ophtalmologie</h1>
-        <p className="text-muted-foreground">
-            Soins des yeux, traitements médicaux et chirurgicaux des maladies oculaires.
-        </p>
+        <div className="flex justify-between items-center">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight">Service d'Ophtalmologie</h1>
+                <p className="text-muted-foreground">
+                    Soins des yeux, traitements médicaux et chirurgicaux des maladies oculaires.
+                </p>
+            </div>
+            <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Nouvelle consultation
+            </Button>
+        </div>
         <div className="grid gap-6 md:grid-cols-2">
             <Card>
                 <CardHeader>
@@ -25,10 +33,6 @@ export default function OphthalmologyPage() {
                     <CardDescription>Raccourcis pour les tâches courantes.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
-                    <Button>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Nouvelle consultation
-                    </Button>
                     <Button variant="secondary">
                         <Eye className="mr-2 h-4 w-4" />
                         Gérer les tests de vision

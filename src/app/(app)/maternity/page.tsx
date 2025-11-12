@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Baby, BedDouble, Stethoscope } from "lucide-react";
+import { Baby, BedDouble, Stethoscope, PlusCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const maternityData = {
     stats: [
@@ -19,7 +20,16 @@ const maternityData = {
 export default function MaternityPage() {
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Service de Maternité</h1>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Service de Maternité</h1>
+          <p className="text-muted-foreground">Gestion des patientes, des naissances et des soins prénatals.</p>
+        </div>
+        <Button>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Ajouter une patiente
+        </Button>
+      </div>
       <div className="grid gap-4 md:grid-cols-3">
         {maternityData.stats.map(stat => (
             <Card key={stat.title}>

@@ -1,12 +1,22 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Syringe, ToyBrick } from "lucide-react";
+import { FileText, Syringe, ToyBrick, PlusCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 
 export default function PediatricsPage() {
   return (
     <div className="space-y-6">
-        <h1 className="text-2xl font-bold tracking-tight">Service de Pédiatrie</h1>
+        <div className="flex justify-between items-center">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight">Service de Pédiatrie</h1>
+                <p className="text-muted-foreground">Soins spécialisés pour les enfants et les nourrissons.</p>
+            </div>
+            <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Ajouter un patient
+            </Button>
+        </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
              <Card>
               <CardHeader>

@@ -1,14 +1,22 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Mic, Video } from "lucide-react";
+import { Calendar, Mic, Video, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function ENTPage() {
   return (
     <div className="space-y-6">
-        <h1 className="text-2xl font-bold tracking-tight">Service d'Oto-rhino-laryngologie (ORL)</h1>
-        <p className="text-muted-foreground">
-            Gestion des consultations, audiogrammes et endoscopies.
-        </p>
+        <div className="flex justify-between items-center">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight">Service d'Oto-rhino-laryngologie (ORL)</h1>
+                <p className="text-muted-foreground">
+                    Gestion des consultations, audiogrammes et endoscopies.
+                </p>
+            </div>
+            <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Ajouter une consultation
+            </Button>
+        </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
              <Card>
               <CardHeader>
