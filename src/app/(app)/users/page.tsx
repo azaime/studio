@@ -1,3 +1,6 @@
+
+"use client"
+import * as React from "react"
 import {
     Card,
     CardContent,
@@ -18,7 +21,8 @@ import {
   import { MoreHorizontal, UserPlus } from "lucide-react"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
   import { Button } from "@/components/ui/button"
-  
+  import { useToast } from "@/hooks/use-toast"
+
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case 'Admin': return 'destructive';
@@ -30,6 +34,15 @@ import {
   }
   
   export default function UsersPage() {
+    const { toast } = useToast()
+
+    const handleCreateUser = () => {
+        toast({
+            title: "Fonctionnalité non implémentée",
+            description: "La création d'utilisateur sera bientôt disponible.",
+        })
+    }
+
     return (
       <Card>
         <CardHeader>
@@ -40,7 +53,7 @@ import {
                     Créez et gérez les comptes et autorisations des utilisateurs.
                     </CardDescription>
                 </div>
-                <Button>
+                <Button onClick={handleCreateUser}>
                     <UserPlus className="mr-2 h-4 w-4" />
                     Créer un compte
                 </Button>
@@ -78,9 +91,9 @@ import {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Modifier les autorisations</DropdownMenuItem>
-                        <DropdownMenuItem>Réinitialiser le mot de passe</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Désactiver le compte</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Modifier les autorisations</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Réinitialiser le mot de passe</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => toast({ title: "Fonctionnalité non implémentée", variant: "destructive" })}>Désactiver le compte</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -92,4 +105,3 @@ import {
       </Card>
     )
   }
-  

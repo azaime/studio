@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -50,6 +51,41 @@ import {
 import { patients } from "@/lib/data"
 import type { Patient } from "@/lib/types"
 import { RegisterPatientDialog } from "./register-patient-dialog"
+import { useToast } from "@/hooks/use-toast"
+
+const ActionCell = ({ row }: { row: any }) => {
+    const { toast } = useToast()
+    const patient = row.original as Patient
+
+    const copyPatientId = () => {
+        navigator.clipboard.writeText(patient.id)
+        toast({
+            title: "ID copié",
+            description: `L'ID du patient ${patient.name} a été copié dans le presse-papiers.`,
+        })
+    }
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Ouvrir le menu</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem onClick={copyPatientId}>
+                    Copier l'ID du patient
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Voir les détails</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Modifier le dossier</DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive" onClick={() => toast({ title: "Fonctionnalité non implémentée", variant: "destructive"})}>Supprimer</DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
+}
 
 const columns: ColumnDef<Patient>[] = [
   {
@@ -108,31 +144,7 @@ const columns: ColumnDef<Patient>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
-      const patient = row.original
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Ouvrir le menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(patient.id)}
-            >
-              Copier l'ID du patient
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Voir les détails</DropdownMenuItem>
-            <DropdownMenuItem>Modifier le dossier</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Supprimer</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    cell: ActionCell,
   },
 ]
 
