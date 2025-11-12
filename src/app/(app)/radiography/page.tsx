@@ -25,6 +25,7 @@ const getStatusBadgeVariant = (status: string) => {
   switch (status) {
     case 'Terminé': return 'secondary';
     case 'En cours': return 'default';
+    case 'Annulé': return 'destructive';
     case 'En attente': return 'outline';
     default: return 'default';
   }
@@ -77,6 +78,21 @@ export default function RadiographyPage() {
     toast({
       title: "Demande d'examen créée",
       description: `Une demande pour ${data.patientName} (${data.examType}) a été créée.`,
+    });
+  };
+  
+  const handleViewDetails = (request: RadiographyRequest) => {
+    toast({
+        title: `Détails pour ${request.patientName}`,
+        description: `Examen: ${request.examType} | Statut: ${request.status} | Demandé le: ${request.requestDate}`
+    });
+  };
+
+  const handleUpdateRequest = (requestId: string, status: RadiographyRequest['status']) => {
+    setRadiographyRequests(prev => prev.map(req => req.id === requestId ? { ...req, status } : req));
+    toast({
+        title: "Statut mis à jour",
+        description: `La demande ${requestId} est maintenant ${status}.`
     });
   };
 
@@ -133,8 +149,10 @@ export default function RadiographyPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Voir les détails</DropdownMenuItem>
-                            <DropdownMenuItem>Mettre à jour le statut</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleViewDetails(request)}>Voir les détails</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleUpdateRequest(request.id, 'En cours')}>Marquer comme 'En cours'</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleUpdateRequest(request.id, 'Terminé')}>Marquer comme 'Terminé'</DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive" onClick={() => handleUpdateRequest(request.id, 'Annulé')}>Annuler la demande</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

@@ -58,5 +58,5 @@ export type RadiographyRequest = {
   patientName: string;
   examType: string;
   requestDate: string;
-  status: 'En attente' | 'Terminé' | 'En cours';
+  status: 'En attente' | 'Terminé' | 'En cours' | 'Annulé';
 };
