@@ -76,7 +76,7 @@ export default function PediatricsPage() {
                     <div className="flex justify-between"><span>BCG</span> <Badge variant="secondary">À jour</Badge></div>
                     <div className="flex justify-between"><span>Polio</span> <Badge>En cours</Badge></div>
                     <div className="flex justify-between"><span>Rougeole</span> <Badge variant="outline">À venir</Badge></div>
-                    <Button size="sm" className="mt-2" onClick={handleManageVaccines}><Syringe className="mr-2"/> Gérer les vaccins</Button>
+                    <Button size="sm" className="mt-2" onClick={handleManageVaccines}><Syringe className="mr-2 h-4 w-4"/> Gérer les vaccins</Button>
                 </CardContent>
                 </Card>
                 <Card>
@@ -85,8 +85,8 @@ export default function PediatricsPage() {
                     <CardDescription>Accès rapide aux dossiers et salles.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
-                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Dossiers pédiatriques')}><FileText className="mr-2"/> Dossiers pédiatriques</Button>
-                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Gestion de la salle de jeux')}><ToyBrick className="mr-2"/> Gérer la salle de jeux</Button>
+                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Dossiers pédiatriques')}><FileText className="mr-2 h-4 w-4"/> Dossiers pédiatriques</Button>
+                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Gestion de la salle de jeux')}><ToyBrick className="mr-2 h-4 w-4"/> Gérer la salle de jeux</Button>
                 </CardContent>
                 </Card>
             </div>
