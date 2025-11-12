@@ -52,3 +52,11 @@ export type EmergencyTriage = {
   urgency: 'Critique' | 'Urgent' | 'Non-Urgent';
   status: 'En attente' | 'En traitement' | 'Sorti';
 }
+
+export type RadiographyRequest = {
+  id: string;
+  patientName: string;
+  examType: string;
+  requestDate: string;
+  status: 'En attente' | 'Terminé' | 'En cours';
+};

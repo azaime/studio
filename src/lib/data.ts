@@ -1,4 +1,4 @@
-import type { Patient, Appointment, Medication, User, LabRequest, EmergencyTriage } from '@/lib/types';
+import type { Patient, Appointment, Medication, User, LabRequest, EmergencyTriage, RadiographyRequest } from '@/lib/types';
 import { subDays, format } from 'date-fns';
 
 export const patients: Patient[] = [
@@ -49,4 +49,10 @@ export const emergencyTriage: EmergencyTriage[] = [
     { id: 'TRI001', patientName: 'Inconnu', arrivalTime: '10:30', urgency: 'Critique', status: 'En traitement' },
     { id: 'TRI002', patientName: 'Alioune Badara', arrivalTime: '10:45', urgency: 'Urgent', status: 'En attente' },
     { id: 'TRI003', patientName: 'Ndella Faye', arrivalTime: '11:00', urgency: 'Non-Urgent', status: 'En attente' },
+];
+
+export const radiographyRequests: RadiographyRequest[] = [
+  { id: 'RAD001', patientName: 'Aminata Sow', examType: 'Radiographie pulmonaire', requestDate: format(subDays(new Date(), 2), 'yyyy-MM-dd'), status: 'En attente' },
+  { id: 'RAD002', patientName: 'Moussa Diop', examType: 'Scanner (CT)', requestDate: format(subDays(new Date(), 1), 'yyyy-MM-dd'), status: 'En cours' },
+  { id: 'RAD003', patientName: 'Fatima Gueye', examType: 'IRM', requestDate: format(subDays(new Date(), 1), 'yyyy-MM-dd'), status: 'Terminé' },
 ];

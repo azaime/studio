@@ -4,14 +4,37 @@
 import { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, ListOrdered, FileSearch, PlusCircle } from "lucide-react";
+import { Upload, ListOrdered, FileSearch, PlusCircle, MoreHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { RequestExamDialog } from '@/components/radiography/request-exam-dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { radiographyRequests as initialRadiographyRequests } from "@/lib/data";
+import type { RadiographyRequest } from '@/lib/types';
+
+const getStatusBadgeVariant = (status: string) => {
+  switch (status) {
+    case 'Terminé': return 'secondary';
+    case 'En cours': return 'default';
+    case 'En attente': return 'outline';
+    default: return 'default';
+  }
+}
+
 
 export default function RadiographyPage() {
   const { toast } = useToast();
   const [isRequestingExam, setIsRequestingExam] = useState(false);
+  const [radiographyRequests, setRadiographyRequests] = useState<RadiographyRequest[]>(initialRadiographyRequests);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUploadClick = () => {
@@ -43,11 +66,18 @@ export default function RadiographyPage() {
   };
 
   const handleExamRequested = (data: { patientName: string, examType: string }) => {
+    const newRequest: RadiographyRequest = {
+        id: `RAD${Date.now()}`,
+        patientName: data.patientName,
+        examType: data.examType,
+        requestDate: new Date().toISOString().split('T')[0],
+        status: 'En attente'
+    };
+    setRadiographyRequests(prev => [newRequest, ...prev]);
     toast({
       title: "Demande d'examen créée",
       description: `Une demande pour ${data.patientName} (${data.examType}) a été créée.`,
     });
-    // Here you would typically update a state with the new request
   };
 
   return (
@@ -65,53 +95,84 @@ export default function RadiographyPage() {
           </div>
           
           <Card>
-              <CardHeader>
-                  <CardTitle>Nouvelle demande d'examen</CardTitle>
-                  <CardDescription>Remplissez les informations pour une nouvelle radiographie.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                   <Input placeholder="Nom du patient ou ID" />
-                   <Button className="w-full" onClick={handleUploadClick}>
-                      <Upload className="mr-2 h-4 w-4" />
-                      Télécharger l'ordonnance
-                   </Button>
-                   <Input 
-                      type="file" 
-                      ref={fileInputRef} 
-                      onChange={handleFileChange}
-                      className="hidden"
-                      accept="image/*,.pdf"
-                    />
-              </CardContent>
+            <CardHeader>
+              <CardTitle>Demandes d'examen</CardTitle>
+              <CardDescription>Liste de toutes les demandes de radiographie.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID Demande</TableHead>
+                    <TableHead>Patient</TableHead>
+                    <TableHead>Type d'examen</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Statut</TableHead>
+                    <TableHead>
+                      <span className="sr-only">Actions</span>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {radiographyRequests.map((request) => (
+                    <TableRow key={request.id}>
+                      <TableCell className="font-medium">{request.id}</TableCell>
+                      <TableCell>{request.patientName}</TableCell>
+                      <TableCell>{request.examType}</TableCell>
+                      <TableCell>{request.requestDate}</TableCell>
+                      <TableCell>
+                        <Badge variant={getStatusBadgeVariant(request.status)}>{request.status}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem>Voir les détails</DropdownMenuItem>
+                            <DropdownMenuItem>Mettre à jour le statut</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
           </Card>
 
           <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                  <CardHeader>
-                      <CardTitle>File d'attente</CardTitle>
-                      <CardDescription>Patients en attente d'un examen.</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                      <p>3 patients en attente.</p>
-                      <Button variant="secondary" className="mt-4" onClick={handleManageQueue}>
-                          <ListOrdered className="mr-2 h-4 w-4" />
-                          Gérer la file
-                      </Button>
-                  </CardContent>
-              </Card>
-              <Card>
-                  <CardHeader>
-                      <CardTitle>Archives</CardTitle>
-                      <CardDescription>Rechercher dans les examens passés.</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                      <p>Consultez les radiographies archivées.</p>
-                      <Button variant="outline" className="mt-4" onClick={handleSearchExams}>
-                          <FileSearch className="mr-2 h-4 w-4" />
-                          Rechercher un examen
-                      </Button>
-                  </CardContent>
-              </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Actions rapides</CardTitle>
+                    <CardDescription>Autres outils et archives.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-2">
+                    <Button className="w-full justify-start" onClick={handleUploadClick}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Télécharger une ordonnance
+                    </Button>
+                    <Input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        onChange={handleFileChange}
+                        className="hidden"
+                        accept="image/*,.pdf"
+                    />
+                    <Button variant="secondary" className="w-full justify-start" onClick={handleManageQueue}>
+                        <ListOrdered className="mr-2 h-4 w-4" />
+                        Gérer la file d'attente
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" onClick={handleSearchExams}>
+                        <FileSearch className="mr-2 h-4 w-4" />
+                        Rechercher dans les archives
+                    </Button>
+                </CardContent>
+            </Card>
           </div>
       </div>
       <RequestExamDialog 
