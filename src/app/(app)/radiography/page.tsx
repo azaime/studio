@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload, ListOrdered, FileSearch, PlusCircle } from "lucide-react";
@@ -12,12 +12,20 @@ import { RequestExamDialog } from '@/components/radiography/request-exam-dialog'
 export default function RadiographyPage() {
   const { toast } = useToast();
   const [isRequestingExam, setIsRequestingExam] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleUploadPrescription = () => {
-    toast({
-      title: "Fonctionnalité à venir",
-      description: "Le téléchargement d'ordonnances sera bientôt disponible.",
-    });
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      toast({
+        title: "Ordonnance téléchargée",
+        description: `Le fichier "${file.name}" a été sélectionné.`,
+      });
+    }
   };
 
   const handleManageQueue = () => {
@@ -63,10 +71,17 @@ export default function RadiographyPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                    <Input placeholder="Nom du patient ou ID" />
-                   <Button className="w-full" onClick={handleUploadPrescription}>
+                   <Button className="w-full" onClick={handleUploadClick}>
                       <Upload className="mr-2 h-4 w-4" />
                       Télécharger l'ordonnance
                    </Button>
+                   <Input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleFileChange}
+                      className="hidden"
+                      accept="image/*,.pdf"
+                    />
               </CardContent>
           </Card>
 
