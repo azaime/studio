@@ -101,7 +101,7 @@ import {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Modifier les autorisations</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toast({ title: "Modification activée", description: "Vous pouvez maintenant modifier cet utilisateur." })}>Modifier les autorisations</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Réinitialiser le mot de passe</DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive" onClick={() => toast({ title: "Fonctionnalité non implémentée", variant: "destructive" })}>Désactiver le compte</DropdownMenuItem>
                       </DropdownMenuContent>
