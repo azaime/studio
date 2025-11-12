@@ -35,6 +35,13 @@ export default function PediatricsPage() {
         });
     }
 
+    const handleFeatureComingSoon = (featureName: string) => {
+        toast({
+            title: "Fonctionnalité à venir",
+            description: `La section '${featureName}' sera bientôt disponible.`,
+        });
+    }
+
   return (
     <>
         <div className="space-y-6">
@@ -78,8 +85,8 @@ export default function PediatricsPage() {
                     <CardDescription>Accès rapide aux dossiers et salles.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
-                    <Button variant="outline"><FileText className="mr-2"/> Dossiers pédiatriques</Button>
-                    <Button variant="outline"><ToyBrick className="mr-2"/> Gérer la salle de jeux</Button>
+                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Dossiers pédiatriques')}><FileText className="mr-2"/> Dossiers pédiatriques</Button>
+                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Gestion de la salle de jeux')}><ToyBrick className="mr-2"/> Gérer la salle de jeux</Button>
                 </CardContent>
                 </Card>
             </div>
