@@ -21,9 +21,9 @@ import { Button } from "@/components/ui/button"
 
 const getStatusBadgeVariant = (status: string) => {
   switch (status) {
-    case 'Completed': return 'secondary';
-    case 'In Progress': return 'default';
-    case 'Pending': return 'outline';
+    case 'Terminé': return 'secondary';
+    case 'En cours': return 'default';
+    case 'En attente': return 'outline';
     default: return 'default';
   }
 }
@@ -32,20 +32,20 @@ export default function LabPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Laboratory Requests</CardTitle>
+        <CardTitle>Demandes de laboratoire</CardTitle>
         <CardDescription>
-          Manage and track all medical analysis requests.
+          Gérez et suivez toutes les demandes d'analyses médicales.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Request ID</TableHead>
+              <TableHead>ID Demande</TableHead>
               <TableHead>Patient</TableHead>
-              <TableHead>Test Type</TableHead>
-              <TableHead>Request Date</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Type de test</TableHead>
+              <TableHead>Date de demande</TableHead>
+              <TableHead>Statut</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
@@ -66,13 +66,13 @@ export default function LabPage() {
                     <DropdownMenuTrigger asChild>
                       <Button aria-haspopup="true" size="icon" variant="ghost">
                         <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Toggle menu</span>
+                        <span className="sr-only">Menu</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>View Results</DropdownMenuItem>
-                      <DropdownMenuItem>Update Status</DropdownMenuItem>
+                      <DropdownMenuItem>Voir les résultats</DropdownMenuItem>
+                      <DropdownMenuItem>Mettre à jour le statut</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

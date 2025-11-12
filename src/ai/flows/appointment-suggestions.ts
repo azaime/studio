@@ -1,28 +1,28 @@
 // src/ai/flows/appointment-suggestions.ts
 'use server';
 /**
- * @fileOverview Provides AI-powered suggestions for optimal appointment times.
+ * @fileOverview Fournit des suggestions basées sur l'IA pour les heures de rendez-vous optimales.
  *
- * - `getAppointmentSuggestions` - A function that suggests appointment times based on doctor availability, patient history, and appointment type.
- * - `AppointmentSuggestionsInput` - The input type for the `getAppointmentSuggestions` function.
- * - `AppointmentSuggestionsOutput` - The return type for the `getAppointmentSuggestions` function.
+ * - `getAppointmentSuggestions` - Une fonction qui suggère des heures de rendez-vous en fonction de la disponibilité du médecin, de l'historique du patient et du type de rendez-vous.
+ * - `AppointmentSuggestionsInput` - Le type d'entrée pour la fonction `getAppointmentSuggestions`.
+ * - `AppointmentSuggestionsOutput` - Le type de retour pour la fonction `getAppointmentSuggestions`.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AppointmentSuggestionsInputSchema = z.object({
-  doctorId: z.string().describe('The ID of the doctor.'),
-  patientId: z.string().describe('The ID of the patient.'),
-  appointmentType: z.string().describe('The type of appointment (e.g., consultation, follow-up).'),
-  requestedDate: z.string().describe('The date for which the appointment is requested (YYYY-MM-DD).'),
+  doctorId: z.string().describe('L\'ID du médecin.'),
+  patientId: z.string().describe('L\'ID du patient.'),
+  appointmentType: z.string().describe('Le type de rendez-vous (par exemple, consultation, suivi).'),
+  requestedDate: z.string().describe('La date pour laquelle le rendez-vous est demandé (AAAA-MM-JJ).'),
 });
 export type AppointmentSuggestionsInput = z.infer<typeof AppointmentSuggestionsInputSchema>;
 
 const AppointmentSuggestionsOutputSchema = z.object({
   suggestedTimes: z.array(
-    z.string().describe('A list of suggested appointment times (HH:mm).')
-  ).describe('Suggested appointment times based on availability and patient history.'),
+    z.string().describe('Une liste d\'heures de rendez-vous suggérées (HH:mm).')
+  ).describe('Heures de rendez-vous suggérées en fonction de la disponibilité et de l\'historique du patient.'),
 });
 export type AppointmentSuggestionsOutput = z.infer<typeof AppointmentSuggestionsOutputSchema>;
 
@@ -34,18 +34,18 @@ const appointmentSuggestionsPrompt = ai.definePrompt({
   name: 'appointmentSuggestionsPrompt',
   input: {schema: AppointmentSuggestionsInputSchema},
   output: {schema: AppointmentSuggestionsOutputSchema},
-  prompt: `You are an AI assistant specialized in scheduling appointments for a hospital.
+  prompt: `Vous êtes un assistant IA spécialisé dans la planification de rendez-vous pour un hôpital.
 
-  Based on the doctor's availability, the patient's history, and the requested appointment type and date, suggest three optimal appointment times.
+  En vous basant sur la disponibilité du médecin, l'historique du patient et le type et la date de rendez-vous demandés, suggérez trois heures de rendez-vous optimales.
 
-  Doctor ID: {{{doctorId}}}
-  Patient ID: {{{patientId}}}
-  Appointment Type: {{{appointmentType}}}
-  Requested Date: {{{requestedDate}}}
+  ID du médecin: {{{doctorId}}}
+  ID du patient: {{{patientId}}}
+  Type de rendez-vous: {{{appointmentType}}}
+  Date demandée: {{{requestedDate}}}
 
-  Consider typical appointment durations for the given appointment type and avoid double-booking the doctor.
+  Tenez compte des durées de rendez-vous typiques pour le type de rendez-vous donné et évitez la double réservation du médecin.
 
-  Return only the suggested times in the format HH:mm.`,
+  Retournez uniquement les heures suggérées au format HH:mm.`,
 });
 
 const appointmentSuggestionsFlow = ai.defineFlow(

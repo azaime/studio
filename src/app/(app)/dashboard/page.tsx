@@ -9,19 +9,19 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Tableau de bord</h1>
           <p className="text-muted-foreground">
-            Overview of your hospital's activities.
+            Aperçu des activités de votre hôpital.
           </p>
         </div>
         <div className="flex gap-2">
             <Button variant="outline">
                 <UserPlus className="mr-2 h-4 w-4" />
-                Register Patient
+                Enregistrer un patient
             </Button>
             <Button>
                 <CalendarPlus className="mr-2 h-4 w-4" />
-                New Appointment
+                Nouveau rendez-vous
             </Button>
         </div>
       </div>

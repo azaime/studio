@@ -15,6 +15,7 @@ import { fetchAppointmentSuggestions } from '@/lib/actions';
 import { Calendar as CalendarIcon, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 type Doctor = { id: string; name: string };
 
@@ -39,7 +40,7 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
 
   const handleGetSuggestions = () => {
     if (!patientId || !doctorId || !appointmentType || !date) {
-      setError("Please fill all fields before getting suggestions.");
+      setError("Veuillez remplir tous les champs avant d'obtenir des suggestions.");
       return;
     }
     setError(null);
@@ -57,7 +58,7 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
       } else {
         if (result.error) {
             toast({
-                title: 'AI Suggestion Notice',
+                title: 'Avis de suggestion IA',
                 description: result.error,
                 variant: 'default',
             })
@@ -71,8 +72,8 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
     event.preventDefault();
     if (!patientId || !doctorId || !appointmentType || !date || !selectedTime) {
       toast({
-        title: "Incomplete Form",
-        description: "Please fill all fields and select a time.",
+        title: "Formulaire incomplet",
+        description: "Veuillez remplir tous les champs et sélectionner une heure.",
         variant: "destructive",
       });
       return;
@@ -81,8 +82,8 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
     const patientName = patients.find(p => p.id === patientId)?.name;
 
     toast({
-      title: "Appointment Scheduled",
-      description: `Appointment for ${patientName} has been scheduled on ${format(date, 'PPP')} at ${selectedTime}.`,
+      title: "Rendez-vous programmé",
+      description: `Le rendez-vous pour ${patientName} a été programmé le ${format(date, 'PPP', { locale: fr })} à ${selectedTime}.`,
     });
     onOpenChange(false);
     // Reset state
@@ -104,33 +105,33 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Schedule New Appointment</DialogTitle>
+            <DialogTitle>Planifier un nouveau rendez-vous</DialogTitle>
             <DialogDescription>
-              Use the AI assistant to find the best time slots.
+              Utilisez l'assistant IA pour trouver les meilleurs créneaux horaires.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="patient">Patient</Label>
               <Select onValueChange={setPatientId} value={patientId}>
-                <SelectTrigger><SelectValue placeholder="Select a patient" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Sélectionnez un patient" /></SelectTrigger>
                 <SelectContent>
                   {patients.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="doctor">Doctor</Label>
+              <Label htmlFor="doctor">Docteur</Label>
               <Select onValueChange={setDoctorId} value={doctorId}>
-                <SelectTrigger><SelectValue placeholder="Select a doctor" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Sélectionnez un docteur" /></SelectTrigger>
                 <SelectContent>
                   {doctors.map(d => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="type">Appointment Type</Label>
-              <Input id="type" placeholder="e.g., Consultation, Follow-up" value={appointmentType} onChange={(e) => setAppointmentType(e.target.value)} />
+              <Label htmlFor="type">Type de rendez-vous</Label>
+              <Input id="type" placeholder="ex: Consultation, Suivi" value={appointmentType} onChange={(e) => setAppointmentType(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="date">Date</Label>
@@ -138,26 +139,26 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
                 <PopoverTrigger asChild>
                   <Button variant={"outline"} className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}>
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                    {date ? format(date, "PPP", { locale: fr }) : <span>Choisissez une date</span>}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={setDate} initialFocus /></PopoverContent>
+                <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={setDate} initialFocus locale={fr} /></PopoverContent>
               </Popover>
             </div>
 
             <Button type="button" onClick={handleGetSuggestions} disabled={isPending}>
               <Sparkles className="mr-2 h-4 w-4" />
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Get AI Suggestions
+              Obtenir des suggestions IA
             </Button>
             
             {error && <p className="text-sm text-destructive">{error}</p>}
 
-            {isPending && <div className="text-center text-sm text-muted-foreground flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Thinking...</div>}
+            {isPending && <div className="text-center text-sm text-muted-foreground flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Pensée...</div>}
 
             {suggestions.length > 0 && !isPending && (
               <div className="space-y-2 rounded-lg border p-4 bg-secondary/50">
-                <Label>Suggested Times</Label>
+                <Label>Horaires suggérés</Label>
                 <RadioGroup onValueChange={setSelectedTime} value={selectedTime}>
                   <div className="flex flex-wrap gap-4">
                     {suggestions.map((time) => (
@@ -172,7 +173,7 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
             )}
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={!selectedTime}>Schedule Appointment</Button>
+            <Button type="submit" disabled={!selectedTime}>Planifier le rendez-vous</Button>
           </DialogFooter>
         </form>
       </DialogContent>

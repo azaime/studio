@@ -29,13 +29,13 @@ import {
 import { Button } from "../ui/button"
 
 const navItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/dashboard", icon: LayoutDashboard, label: "Tableau de bord" },
   { href: "/patients", icon: Users, label: "Patients" },
-  { href: "/appointments", icon: Calendar, label: "Appointments" },
-  { href: "/emergency", icon: Siren, label: "Emergency" },
-  { href: "/lab", icon: FlaskConical, label: "Lab" },
-  { href: "/pharmacy", icon: Pill, label: "Pharmacy" },
-  { href: "/users", icon: UserPlus, label: "Users" },
+  { href: "/appointments", icon: Calendar, label: "Rendez-vous" },
+  { href: "/emergency", icon: Siren, label: "Urgences" },
+  { href: "/lab", icon: FlaskConical, label: "Labo" },
+  { href: "/pharmacy", icon: Pill, label: "Pharmacie" },
+  { href: "/users", icon: UserPlus, label: "Utilisateurs" },
 ]
 
 export function AppSidebar() {
@@ -67,16 +67,16 @@ export function AppSidebar() {
       <SidebarFooter className="p-2">
          <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Settings">
+                <SidebarMenuButton tooltip="Paramètres">
                     <Settings />
-                    <span>Settings</span>
+                    <span>Paramètres</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
                 <Button asChild variant="ghost" className="w-full justify-start">
                     <Link href="/login">
                         <LogOut className="mr-2" />
-                        <span>Logout</span>
+                        <span>Déconnexion</span>
                     </Link>
                 </Button>
             </SidebarMenuItem>

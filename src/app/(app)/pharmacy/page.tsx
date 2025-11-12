@@ -19,9 +19,9 @@ import { Progress } from "@/components/ui/progress"
 
 const getStatusBadgeVariant = (status: string) => {
   switch (status) {
-    case 'In Stock': return 'secondary';
-    case 'Low Stock': return 'default';
-    case 'Expired': return 'destructive';
+    case 'En stock': return 'secondary';
+    case 'Stock bas': return 'default';
+    case 'Expiré': return 'destructive';
     default: return 'outline';
   }
 }
@@ -30,20 +30,20 @@ export default function PharmacyPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pharmacy Stock Control</CardTitle>
+        <CardTitle>Contrôle des stocks de la pharmacie</CardTitle>
         <CardDescription>
-          Real-time inventory of medications and medical supplies.
+          Inventaire en temps réel des médicaments et des fournitures médicales.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[300px]">Medication</TableHead>
-              <TableHead>Stock Level</TableHead>
-              <TableHead>Stock Status</TableHead>
-              <TableHead>Expiration Date</TableHead>
-              <TableHead className="text-right">Status</TableHead>
+              <TableHead className="w-[300px]">Médicament</TableHead>
+              <TableHead>Niveau de stock</TableHead>
+              <TableHead>État du stock</TableHead>
+              <TableHead>Date d'expiration</TableHead>
+              <TableHead className="text-right">Statut</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

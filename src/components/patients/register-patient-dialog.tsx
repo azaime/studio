@@ -29,8 +29,8 @@ export function RegisterPatientDialog({ open, onOpenChange }: RegisterPatientDia
         const name = formData.get('name');
         
         toast({
-            title: "Patient Registered",
-            description: `${name} has been successfully registered.`,
+            title: "Patient enregistré",
+            description: `${name} a été enregistré avec succès.`,
         });
         onOpenChange(false);
     }
@@ -40,15 +40,15 @@ export function RegisterPatientDialog({ open, onOpenChange }: RegisterPatientDia
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
         <DialogHeader>
-          <DialogTitle>Register New Patient</DialogTitle>
+          <DialogTitle>Enregistrer un nouveau patient</DialogTitle>
           <DialogDescription>
-            Fill in the details below to add a new patient to the system.
+            Remplissez les détails ci-dessous pour ajouter un nouveau patient au système.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Full Name
+              Nom complet
             </Label>
             <Input id="name" name="name" className="col-span-3" required />
           </div>
@@ -60,38 +60,38 @@ export function RegisterPatientDialog({ open, onOpenChange }: RegisterPatientDia
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="phone" className="text-right">
-              Phone
+              Téléphone
             </Label>
             <Input id="phone" name="phone" className="col-span-3" required />
           </div>
            <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="age" className="text-right">
-              Age
+              Âge
             </Label>
             <Input id="age" name="age" type="number" className="col-span-3" required />
           </div>
            <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">
-              Gender
+              Genre
             </Label>
             <RadioGroup defaultValue="other" className="col-span-3 flex gap-4">
                 <div className="flex items-center space-x-2">
                     <RadioGroupItem value="male" id="male" />
-                    <Label htmlFor="male">Male</Label>
+                    <Label htmlFor="male">Homme</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                     <RadioGroupItem value="female" id="female" />
-                    <Label htmlFor="female">Female</Label>
+                    <Label htmlFor="female">Femme</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                     <RadioGroupItem value="other" id="other" />
-                    <Label htmlFor="other">Other</Label>
+                    <Label htmlFor="other">Autre</Label>
                 </div>
             </RadioGroup>
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Register Patient</Button>
+          <Button type="submit">Enregistrer le patient</Button>
         </DialogFooter>
         </form>
       </DialogContent>

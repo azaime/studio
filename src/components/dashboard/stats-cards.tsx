@@ -7,10 +7,10 @@ import {
 import { Users, Calendar, Pill, Siren } from "lucide-react"
 
 const stats = [
-    { title: "Total Patients", value: "1,254", icon: Users, change: "+20.1% from last month" },
-    { title: "Appointments Today", value: "32", icon: Calendar, change: "+15 since yesterday" },
-    { title: "Meds Low Stock", value: "8", icon: Pill, change: "2 expiring soon" },
-    { title: "ER Occupancy", value: "75%", icon: Siren, change: "3 critical cases" },
+    { title: "Total des patients", value: "1,254", icon: Users, change: "+20.1% depuis le mois dernier" },
+    { title: "Rendez-vous aujourd'hui", value: "32", icon: Calendar, change: "+15 depuis hier" },
+    { title: "Médicaments en stock bas", value: "8", icon: Pill, change: "2 expirent bientôt" },
+    { title: "Taux d'occupation des urgences", value: "75%", icon: Siren, change: "3 cas critiques" },
 ]
 
 export function StatsCards() {

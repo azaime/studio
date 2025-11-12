@@ -15,11 +15,11 @@ import { cn } from '@/lib/utils';
 export function AppointmentList() {
     const [isScheduling, setIsScheduling] = useState(false);
 
-    const getStatusVariant = (status: 'Scheduled' | 'Completed' | 'Cancelled') => {
+    const getStatusVariant = (status: 'Programmé' | 'Terminé' | 'Annulé') => {
         switch (status) {
-            case 'Scheduled': return 'default';
-            case 'Completed': return 'secondary';
-            case 'Cancelled': return 'destructive';
+            case 'Programmé': return 'default';
+            case 'Terminé': return 'secondary';
+            case 'Annulé': return 'destructive';
             default: return 'outline';
         }
     }
@@ -30,16 +30,16 @@ export function AppointmentList() {
         <CardHeader>
           <div className="flex items-center justify-between gap-4">
               <div>
-                  <CardTitle>All Appointments</CardTitle>
-                  <CardDescription>A list of all scheduled appointments.</CardDescription>
+                  <CardTitle>Tous les rendez-vous</CardTitle>
+                  <CardDescription>Une liste de tous les rendez-vous programmés.</CardDescription>
               </div>
               <Button onClick={() => setIsScheduling(true)}>
                   <CalendarPlus className="mr-2 h-4 w-4" />
-                  Schedule Appointment
+                  Planifier un rendez-vous
               </Button>
           </div>
           <div className="flex items-center justify-between pt-4">
-            <Input placeholder="Search by patient name..." className="max-w-sm" />
+            <Input placeholder="Rechercher par nom de patient..." className="max-w-sm" />
             {/* Add more filters here if needed, e.g., by date or status */}
           </div>
         </CardHeader>
@@ -49,10 +49,10 @@ export function AppointmentList() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Patient</TableHead>
-                  <TableHead>Doctor</TableHead>
+                  <TableHead>Docteur</TableHead>
                   <TableHead>Service</TableHead>
-                  <TableHead>Date & Time</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Date & Heure</TableHead>
+                  <TableHead>Statut</TableHead>
                   <TableHead><span className="sr-only">Actions</span></TableHead>
                 </TableRow>
               </TableHeader>
@@ -62,7 +62,7 @@ export function AppointmentList() {
                     <TableCell className="font-medium">{appointment.patientName}</TableCell>
                     <TableCell>{appointment.doctorName}</TableCell>
                     <TableCell>{appointment.service}</TableCell>
-                    <TableCell>{appointment.date} at {appointment.time}</TableCell>
+                    <TableCell>{appointment.date} à {appointment.time}</TableCell>
                     <TableCell>
                       <Badge variant={getStatusVariant(appointment.status)}>{appointment.status}</Badge>
                     </TableCell>
@@ -71,14 +71,14 @@ export function AppointmentList() {
                         <DropdownMenuTrigger asChild>
                           <Button aria-haspopup="true" size="icon" variant="ghost">
                             <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
+                            <span className="sr-only">Menu</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Reschedule</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Cancel</DropdownMenuItem>
+                          <DropdownMenuItem>Voir les détails</DropdownMenuItem>
+                          <DropdownMenuItem>Replanifier</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive">Annuler</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

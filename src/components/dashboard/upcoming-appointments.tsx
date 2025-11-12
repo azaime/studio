@@ -14,19 +14,19 @@ import { Button } from "../ui/button"
 import { ArrowUpRight } from "lucide-react"
 
 export function UpcomingAppointments() {
-    const upcomingAppointments = appointments.filter(a => a.status === 'Scheduled').slice(0, 5);
+    const upcomingAppointments = appointments.filter(a => a.status === 'Programmé').slice(0, 5);
   return (
     <Card>
         <CardHeader className="flex flex-row items-center">
             <div className="grid gap-2">
-                <CardTitle>Upcoming Appointments</CardTitle>
+                <CardTitle>Rendez-vous à venir</CardTitle>
                 <CardDescription>
-                You have {upcomingAppointments.length} appointments today.
+                Vous avez {upcomingAppointments.length} rendez-vous aujourd'hui.
                 </CardDescription>
             </div>
             <Button asChild size="sm" className="ml-auto gap-1">
                 <Link href="/appointments">
-                View All
+                Voir tout
                 <ArrowUpRight className="h-4 w-4" />
                 </Link>
             </Button>
@@ -37,8 +37,8 @@ export function UpcomingAppointments() {
                     <TableRow>
                     <TableHead>Patient</TableHead>
                     <TableHead>Service</TableHead>
-                    <TableHead>Time</TableHead>
-                    <TableHead className="text-right">Doctor</TableHead>
+                    <TableHead>Heure</TableHead>
+                    <TableHead className="text-right">Docteur</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>

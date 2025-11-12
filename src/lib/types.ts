@@ -2,7 +2,7 @@ export type Patient = {
   id: string;
   name: string;
   age: number;
-  gender: 'Male' | 'Female' | 'Other';
+  gender: 'Homme' | 'Femme' | 'Autre';
   lastVisit: string;
   email: string;
   phone: string;
@@ -17,7 +17,7 @@ export type Appointment = {
   service: string;
   date: string;
   time: string;
-  status: 'Scheduled' | 'Completed' | 'Cancelled';
+  status: 'Programmé' | 'Terminé' | 'Annulé';
 };
 
 export type Medication = {
@@ -26,14 +26,14 @@ export type Medication = {
   stock: number;
   minStock: number;
   expirationDate: string;
-  status: 'In Stock' | 'Low Stock' | 'Expired';
+  status: 'En stock' | 'Stock bas' | 'Expiré';
 };
 
 export type User = {
   id: string;
   name: string;
   email: string;
-  role: 'Admin' | 'Doctor' | 'Nurse' | 'Pharmacist';
+  role: 'Admin' | 'Docteur' | 'Infirmier' | 'Pharmacien';
   lastLogin: string;
 };
 
@@ -42,13 +42,13 @@ export type LabRequest = {
   patientName: string;
   test: string;
   requestDate: string;
-  status: 'Pending' | 'Completed' | 'In Progress';
+  status: 'En attente' | 'Terminé' | 'En cours';
 };
 
 export type EmergencyTriage = {
   id: string;
   patientName: string;
   arrivalTime: string;
-  urgency: 'Critical' | 'Urgent' | 'Non-Urgent';
-  status: 'Waiting' | 'In Treatment' | 'Discharged';
+  urgency: 'Critique' | 'Urgent' | 'Non-Urgent';
+  status: 'En attente' | 'En traitement' | 'Sorti';
 }

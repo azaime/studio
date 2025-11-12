@@ -29,9 +29,9 @@ import { emergencyTriage } from "@/lib/data"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
-const getUrgencyBadge = (urgency: 'Critical' | 'Urgent' | 'Non-Urgent') => {
+const getUrgencyBadge = (urgency: 'Critique' | 'Urgent' | 'Non-Urgent') => {
     switch (urgency) {
-        case 'Critical': return 'destructive';
+        case 'Critique': return 'destructive';
         case 'Urgent': return 'default';
         case 'Non-Urgent': return 'secondary';
     }
@@ -42,29 +42,29 @@ export default function EmergencyPage() {
     <div className="grid md:grid-cols-2 gap-8">
       <Card>
         <CardHeader>
-          <CardTitle>Emergency Triage</CardTitle>
+          <CardTitle>Triage d'urgence</CardTitle>
           <CardDescription>
-            Quickly register and classify patients based on urgency.
+            Enregistrez et classez rapidement les patients en fonction de l'urgence.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Patient Name</Label>
-                <Input id="name" placeholder="Enter patient name or 'Unknown'" />
+                <Label htmlFor="name">Nom du patient</Label>
+                <Input id="name" placeholder="Entrez le nom du patient ou 'Inconnu'" />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="urgency">Urgency Level</Label>
+                <Label htmlFor="urgency">Niveau d'urgence</Label>
                 <Select>
                   <SelectTrigger id="urgency">
-                    <SelectValue placeholder="Select urgency (e.g., Manchester Scale)" />
+                    <SelectValue placeholder="Sélectionnez l'urgence (ex: Échelle de Manchester)" />
                   </SelectTrigger>
                   <SelectContent position="popper">
-                    <SelectItem value="critical">Level 1: Critical</SelectItem>
-                    <SelectItem value="urgent">Level 2: Urgent</SelectItem>
-                    <SelectItem value="standard">Level 3: Standard</SelectItem>
-                    <SelectItem value="non-urgent">Level 4: Non-urgent</SelectItem>
+                    <SelectItem value="critical">Niveau 1: Critique</SelectItem>
+                    <SelectItem value="urgent">Niveau 2: Urgent</SelectItem>
+                    <SelectItem value="standard">Niveau 3: Standard</SelectItem>
+                    <SelectItem value="non-urgent">Niveau 4: Non-urgent</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -72,23 +72,23 @@ export default function EmergencyPage() {
           </form>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button>Add to Queue</Button>
+          <Button>Ajouter à la file d'attente</Button>
         </CardFooter>
       </Card>
       
       <Card>
         <CardHeader>
-            <CardTitle>Emergency Queue</CardTitle>
-            <CardDescription>Real-time list of patients in the emergency room.</CardDescription>
+            <CardTitle>File d'attente des urgences</CardTitle>
+            <CardDescription>Liste en temps réel des patients aux urgences.</CardDescription>
         </CardHeader>
         <CardContent>
         <Table>
             <TableHeader>
                 <TableRow>
                 <TableHead>Patient</TableHead>
-                <TableHead>Urgency</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Arrival</TableHead>
+                <TableHead>Urgence</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Arrivée</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -96,7 +96,7 @@ export default function EmergencyPage() {
                 <TableRow key={patient.id}>
                     <TableCell className="font-medium">{patient.patientName}</TableCell>
                     <TableCell><Badge variant={getUrgencyBadge(patient.urgency)}>{patient.urgency}</Badge></TableCell>
-                    <TableCell><Badge variant={patient.status === 'In Treatment' ? 'outline' : 'secondary'}>{patient.status}</Badge></TableCell>
+                    <TableCell><Badge variant={patient.status === 'En traitement' ? 'outline' : 'secondary'}>{patient.status}</Badge></TableCell>
                     <TableCell>{patient.arrivalTime}</TableCell>
                 </TableRow>
                 ))}

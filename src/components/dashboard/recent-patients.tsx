@@ -12,9 +12,9 @@ export function RecentPatients() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Patients</CardTitle>
+        <CardTitle>Patients récents</CardTitle>
         <CardDescription>
-            You have {patients.length} patients in total.
+            Vous avez {patients.length} patients au total.
         </CardDescription>
       </CardHeader>
       <CardContent>

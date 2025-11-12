@@ -19,9 +19,9 @@ export default function LoginPage() {
           <div className="flex justify-center">
             <Logo />
           </div>
-          <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl text-center">Bienvenue</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            Entrez vos identifiants pour accéder à votre compte
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -38,18 +38,18 @@ export default function LoginPage() {
             </div>
             <div className="grid gap-2">
               <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Mot de passe</Label>
                 <Link
                   href="#"
                   className="ml-auto inline-block text-sm underline"
                 >
-                  Forgot your password?
+                  Mot de passe oublié?
                 </Link>
               </div>
               <Input id="password" type="password" required defaultValue="password" />
             </div>
             <Button asChild type="submit" className="w-full">
-              <Link href="/dashboard">Sign in</Link>
+              <Link href="/dashboard">Se connecter</Link>
             </Button>
           </div>
         </CardContent>

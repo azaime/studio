@@ -22,9 +22,9 @@ import {
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case 'Admin': return 'destructive';
-      case 'Doctor': return 'default';
-      case 'Nurse': return 'outline';
-      case 'Pharmacist': return 'secondary';
+      case 'Docteur': return 'default';
+      case 'Infirmier': return 'outline';
+      case 'Pharmacien': return 'secondary';
       default: return 'default';
     }
   }
@@ -35,14 +35,14 @@ import {
         <CardHeader>
             <div className="flex justify-between items-center">
                 <div>
-                    <CardTitle>User Account Management</CardTitle>
+                    <CardTitle>Gestion des comptes utilisateurs</CardTitle>
                     <CardDescription>
-                    Create and manage user accounts and permissions.
+                    Créez et gérez les comptes et autorisations des utilisateurs.
                     </CardDescription>
                 </div>
                 <Button>
                     <UserPlus className="mr-2 h-4 w-4" />
-                    Create Account
+                    Créer un compte
                 </Button>
             </div>
         </CardHeader>
@@ -50,10 +50,10 @@ import {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                <TableHead>Nom</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Last Login</TableHead>
+                <TableHead>Rôle</TableHead>
+                <TableHead>Dernière connexion</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -73,14 +73,14 @@ import {
                       <DropdownMenuTrigger asChild>
                         <Button aria-haspopup="true" size="icon" variant="ghost">
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
+                          <span className="sr-only">Menu</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit Permissions</DropdownMenuItem>
-                        <DropdownMenuItem>Reset Password</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Deactivate Account</DropdownMenuItem>
+                        <DropdownMenuItem>Modifier les autorisations</DropdownMenuItem>
+                        <DropdownMenuItem>Réinitialiser le mot de passe</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive">Désactiver le compte</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

@@ -4,17 +4,17 @@ import { getAppointmentSuggestions, type AppointmentSuggestionsInput } from "@/a
 import { z } from "zod";
 
 const schema = z.object({
-  doctorId: z.string().min(1, "Doctor selection is required."),
-  patientId: z.string().min(1, "Patient selection is required."),
-  appointmentType: z.string().min(1, "Appointment type is required."),
-  requestedDate: z.string().min(1, "Date is required."),
+  doctorId: z.string().min(1, "La sélection du médecin est requise."),
+  patientId: z.string().min(1, "La sélection du patient est requise."),
+  appointmentType: z.string().min(1, "Le type de rendez-vous est requis."),
+  requestedDate: z.string().min(1, "La date est requise."),
 });
 
 export async function fetchAppointmentSuggestions(input: AppointmentSuggestionsInput) {
   const validatedInput = schema.safeParse(input);
 
   if (!validatedInput.success) {
-    return { error: "Invalid input.", details: validatedInput.error.flatten() };
+    return { error: "Entrée invalide.", details: validatedInput.error.flatten() };
   }
 
   try {
@@ -34,6 +34,6 @@ export async function fetchAppointmentSuggestions(input: AppointmentSuggestionsI
   } catch (e) {
     console.error(e);
     // Returning fallback data in case of an error with the AI model
-    return { data: ['09:00', '11:00', '14:30'], error: "AI suggestion failed, providing default slots." };
+    return { data: ['09:00', '11:00', '14:30'], error: "La suggestion de l'IA a échoué, fourniture de créneaux par défaut." };
   }
 }

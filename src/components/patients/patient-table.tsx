@@ -61,14 +61,14 @@ const columns: ColumnDef<Patient>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label="Tout sélectionner"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label="Sélectionner la ligne"
       />
     ),
     enableSorting: false,
@@ -82,7 +82,7 @@ const columns: ColumnDef<Patient>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Nom
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -95,15 +95,15 @@ const columns: ColumnDef<Patient>[] = [
   },
   {
     accessorKey: "gender",
-    header: "Gender",
+    header: "Genre",
   },
   {
     accessorKey: "age",
-    header: "Age",
+    header: "Âge",
   },
   {
     accessorKey: "lastVisit",
-    header: "Last Visit",
+    header: "Dernière visite",
   },
   {
     id: "actions",
@@ -114,7 +114,7 @@ const columns: ColumnDef<Patient>[] = [
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">Ouvrir le menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -123,12 +123,12 @@ const columns: ColumnDef<Patient>[] = [
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(patient.id)}
             >
-              Copy patient ID
+              Copier l'ID du patient
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit record</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem>Voir les détails</DropdownMenuItem>
+            <DropdownMenuItem>Modifier le dossier</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive">Supprimer</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -168,17 +168,17 @@ export function PatientTable() {
       <CardHeader>
         <div className="flex items-center justify-between gap-4">
             <div>
-                <CardTitle>All Patients</CardTitle>
-                <CardDescription>A list of all patients in the system.</CardDescription>
+                <CardTitle>Tous les patients</CardTitle>
+                <CardDescription>Une liste de tous les patients du système.</CardDescription>
             </div>
             <Button onClick={() => setRegisterDialogOpen(true)}>
                 <UserPlus className="mr-2 h-4 w-4" />
-                Register New Patient
+                Enregistrer un nouveau patient
             </Button>
         </div>
         <div className="flex items-center justify-between pt-4">
           <Input
-            placeholder="Filter by name..."
+            placeholder="Filtrer par nom..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
@@ -188,7 +188,7 @@ export function PatientTable() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
-                Columns <ChevronDown className="ml-2 h-4 w-4" />
+                Colonnes <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -257,7 +257,7 @@ export function PatientTable() {
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No results.
+                    Aucun résultat.
                   </TableCell>
                 </TableRow>
               )}
@@ -266,8 +266,8 @@ export function PatientTable() {
         </div>
         <div className="flex items-center justify-end space-x-2 py-4">
           <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {table.getFilteredSelectedRowModel().rows.length} sur{" "}
+            {table.getFilteredRowModel().rows.length} ligne(s) sélectionnée(s).
           </div>
           <div className="space-x-2">
             <Button
@@ -276,7 +276,7 @@ export function PatientTable() {
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              Previous
+              Précédent
             </Button>
             <Button
               variant="outline"
@@ -284,7 +284,7 @@ export function PatientTable() {
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              Next
+              Suivant
             </Button>
           </div>
         </div>
