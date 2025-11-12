@@ -1,4 +1,6 @@
+
 "use client"
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -25,55 +27,98 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table"
-import { emergencyTriage } from "@/lib/data"
+import { emergencyTriage as initialEmergencyTriage } from "@/lib/data"
+import type { EmergencyTriage } from "@/lib/types";
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { useToast } from "@/hooks/use-toast";
 
-const getUrgencyBadge = (urgency: 'Critique' | 'Urgent' | 'Non-Urgent') => {
+type UrgencyLevel = 'Critique' | 'Urgent' | 'Standard' | 'Non-Urgent';
+
+const getUrgencyBadge = (urgency: UrgencyLevel) => {
     switch (urgency) {
         case 'Critique': return 'destructive';
         case 'Urgent': return 'default';
-        case 'Non-Urgent': return 'secondary';
+        default: return 'secondary';
     }
 }
 
 export default function EmergencyPage() {
+  const [triageQueue, setTriageQueue] = useState<EmergencyTriage[]>(initialEmergencyTriage);
+  const [patientName, setPatientName] = useState('');
+  const [urgency, setUrgency] = useState<UrgencyLevel | ''>('');
+  const { toast } = useToast();
+
+  const handleAddToQueue = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!urgency || !patientName) {
+        toast({
+            title: "Formulaire incomplet",
+            description: "Veuillez entrer le nom du patient et le niveau d'urgence.",
+            variant: "destructive"
+        });
+        return;
+    }
+
+    const newTriageEntry: EmergencyTriage = {
+        id: `TRI${Date.now()}`,
+        patientName,
+        arrivalTime: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        urgency: urgency as 'Critique' | 'Urgent' | 'Non-Urgent',
+        status: 'En attente'
+    };
+
+    setTriageQueue(prev => [newTriageEntry, ...prev]);
+
+    // Reset form
+    setPatientName('');
+    setUrgency('');
+    
+    toast({
+        title: "Patient ajouté à la file d'attente",
+        description: `${patientName} a été ajouté à la file d'attente des urgences.`,
+    });
+  }
+
+
   return (
     <div className="grid md:grid-cols-2 gap-8">
       <Card>
-        <CardHeader>
-          <CardTitle>Triage d'urgence</CardTitle>
-          <CardDescription>
-            Enregistrez et classez rapidement les patients en fonction de l'urgence.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Nom du patient</Label>
-                <Input id="name" placeholder="Entrez le nom du patient ou 'Inconnu'" />
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="urgency">Niveau d'urgence</Label>
-                <Select>
-                  <SelectTrigger id="urgency">
-                    <SelectValue placeholder="Sélectionnez l'urgence (ex: Échelle de Manchester)" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    <SelectItem value="critical">Niveau 1: Critique</SelectItem>
-                    <SelectItem value="urgent">Niveau 2: Urgent</SelectItem>
-                    <SelectItem value="standard">Niveau 3: Standard</SelectItem>
-                    <SelectItem value="non-urgent">Niveau 4: Non-urgent</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button>Ajouter à la file d'attente</Button>
-        </CardFooter>
+        <form onSubmit={handleAddToQueue}>
+            <CardHeader>
+            <CardTitle>Triage d'urgence</CardTitle>
+            <CardDescription>
+                Enregistrez et classez rapidement les patients en fonction de l'urgence.
+            </CardDescription>
+            </CardHeader>
+            <CardContent>
+            
+                <div className="grid w-full items-center gap-4">
+                <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="name">Nom du patient</Label>
+                    <Input id="name" placeholder="Entrez le nom du patient ou 'Inconnu'" value={patientName} onChange={(e) => setPatientName(e.target.value)} />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="urgency">Niveau d'urgence</Label>
+                    <Select onValueChange={(value) => setUrgency(value as UrgencyLevel)} value={urgency}>
+                    <SelectTrigger id="urgency">
+                        <SelectValue placeholder="Sélectionnez l'urgence (ex: Échelle de Manchester)" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                        <SelectItem value="Critique">Niveau 1: Critique</SelectItem>
+                        <SelectItem value="Urgent">Niveau 2: Urgent</SelectItem>
+                        <SelectItem value="Standard">Niveau 3: Standard</SelectItem>
+                        <SelectItem value="Non-Urgent">Niveau 4: Non-urgent</SelectItem>
+                    </SelectContent>
+                    </Select>
+                </div>
+                </div>
+            
+            </CardContent>
+            <CardFooter className="flex justify-end">
+            <Button type="submit">Ajouter à la file d'attente</Button>
+            </CardFooter>
+        </form>
       </Card>
       
       <Card>
@@ -92,10 +137,10 @@ export default function EmergencyPage() {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {emergencyTriage.map(patient => (
+                {triageQueue.map(patient => (
                 <TableRow key={patient.id}>
                     <TableCell className="font-medium">{patient.patientName}</TableCell>
-                    <TableCell><Badge variant={getUrgencyBadge(patient.urgency)}>{patient.urgency}</Badge></TableCell>
+                    <TableCell><Badge variant={getUrgencyBadge(patient.urgency as UrgencyLevel)}>{patient.urgency}</Badge></TableCell>
                     <TableCell><Badge variant={patient.status === 'En traitement' ? 'outline' : 'secondary'}>{patient.status}</Badge></TableCell>
                     <TableCell>{patient.arrivalTime}</TableCell>
                 </TableRow>

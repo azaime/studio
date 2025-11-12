@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -8,11 +9,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, CalendarPlus } from "lucide-react";
-import { appointments, patients, doctors } from "@/lib/data";
+import { patients, doctors } from "@/lib/data";
 import { ScheduleAppointmentDialog } from './schedule-appointment-dialog';
 import { cn } from '@/lib/utils';
+import type { Appointment } from '@/lib/types';
 
-export function AppointmentList() {
+interface AppointmentListProps {
+    appointments: Appointment[];
+    addAppointment: (newAppointment: Omit<Appointment, 'id' | 'status'>) => void;
+}
+
+export function AppointmentList({ appointments, addAppointment }: AppointmentListProps) {
     const [isScheduling, setIsScheduling] = useState(false);
 
     const getStatusVariant = (status: 'Programmé' | 'Terminé' | 'Annulé') => {
@@ -89,7 +96,7 @@ export function AppointmentList() {
           </div>
         </CardContent>
       </Card>
-      <ScheduleAppointmentDialog open={isScheduling} onOpenChange={setIsScheduling} patients={patients} doctors={doctors} />
+      <ScheduleAppointmentDialog open={isScheduling} onOpenChange={setIsScheduling} patients={patients} doctors={doctors} onAppointmentScheduled={addAppointment} />
     </>
   );
 }

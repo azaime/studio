@@ -1,6 +1,25 @@
+
+"use client"
+
+import { useState } from "react";
 import { PatientTable } from "@/components/patients/patient-table";
+import type { Patient } from "@/lib/types";
+import { patients as initialPatients } from "@/lib/data";
 
 export default function PatientsPage() {
+  const [patients, setPatients] = useState<Patient[]>(initialPatients);
+
+  const addPatient = (newPatient: Omit<Patient, 'id' | 'lastVisit'>) => {
+    setPatients(prev => [
+      { 
+        ...newPatient, 
+        id: `PAT${Date.now()}`,
+        lastVisit: new Date().toISOString().split('T')[0]
+      }, 
+      ...prev
+    ]);
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -9,7 +28,7 @@ export default function PatientsPage() {
           Consultez, ajoutez et gérez tous les dossiers des patients.
         </p>
       </div>
-      <PatientTable />
+      <PatientTable patients={patients} onPatientRegistered={addPatient} />
     </div>
   );
 }

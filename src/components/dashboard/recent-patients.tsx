@@ -1,12 +1,13 @@
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
-import { patients } from "@/lib/data"
+import type { Patient } from "@/lib/types";
 
-export function RecentPatients() {
+export function RecentPatients({ patients }: { patients: Patient[] }) {
   const recentPatients = patients.slice(0, 5);
 
   return (

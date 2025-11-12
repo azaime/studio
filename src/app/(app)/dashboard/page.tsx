@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from 'react';
@@ -9,11 +10,37 @@ import { RecentPatients } from '@/components/dashboard/recent-patients';
 import { UpcomingAppointments } from '@/components/dashboard/upcoming-appointments';
 import { RegisterPatientDialog } from '@/components/patients/register-patient-dialog';
 import { ScheduleAppointmentDialog } from '@/components/appointments/schedule-appointment-dialog';
-import { patients, doctors } from '@/lib/data';
+import { patients as initialPatients, doctors, appointments as initialAppointments } from '@/lib/data';
+import type { Patient, Appointment } from '@/lib/types';
 
 export default function DashboardPage() {
   const [isRegisteringPatient, setIsRegisteringPatient] = useState(false);
   const [isSchedulingAppointment, setIsSchedulingAppointment] = useState(false);
+  const [patients, setPatients] = useState<Patient[]>(initialPatients);
+  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+
+  const addPatient = (newPatient: Omit<Patient, 'id' | 'lastVisit'>) => {
+    setPatients(prev => [
+        { 
+            ...newPatient, 
+            id: `PAT${Date.now()}`,
+            lastVisit: new Date().toISOString().split('T')[0]
+        }, 
+        ...prev
+    ]);
+  };
+  
+  const addAppointment = (newAppointment: Omit<Appointment, 'id' | 'status'>) => {
+    setAppointments(prev => [
+        { 
+            ...newAppointment, 
+            id: `APP${Date.now()}`,
+            status: 'Programmé'
+        }, 
+        ...prev
+    ]);
+  };
+
 
   return (
     <>
@@ -41,15 +68,15 @@ export default function DashboardPage() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
           <div className="lg:col-span-4">
-            <UpcomingAppointments />
+            <UpcomingAppointments appointments={appointments} />
           </div>
           <div className="lg:col-span-3">
-            <RecentPatients />
+            <RecentPatients patients={patients} />
           </div>
         </div>
       </div>
-      <RegisterPatientDialog open={isRegisteringPatient} onOpenChange={setIsRegisteringPatient} />
-      <ScheduleAppointmentDialog open={isSchedulingAppointment} onOpenChange={setIsSchedulingAppointment} patients={patients} doctors={doctors} />
+      <RegisterPatientDialog open={isRegisteringPatient} onOpenChange={setIsRegisteringPatient} onPatientRegistered={addPatient} />
+      <ScheduleAppointmentDialog open={isSchedulingAppointment} onOpenChange={setIsSchedulingAppointment} patients={patients} doctors={doctors} onAppointmentScheduled={addAppointment} />
     </>
   );
 }

@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import * as React from "react"
@@ -48,7 +49,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { patients } from "@/lib/data"
 import type { Patient } from "@/lib/types"
 import { RegisterPatientDialog } from "./register-patient-dialog"
 import { useToast } from "@/hooks/use-toast"
@@ -148,8 +148,12 @@ const columns: ColumnDef<Patient>[] = [
   },
 ]
 
-export function PatientTable() {
-  const [data] = React.useState<Patient[]>(patients)
+interface PatientTableProps {
+    patients: Patient[];
+    onPatientRegistered: (newPatient: Omit<Patient, 'id' | 'lastVisit'>) => void;
+}
+
+export function PatientTable({ patients, onPatientRegistered }: PatientTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -157,7 +161,7 @@ export function PatientTable() {
   const [isRegisterDialogOpen, setRegisterDialogOpen] = React.useState(false)
 
   const table = useReactTable({
-    data,
+    data: patients,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -301,7 +305,7 @@ export function PatientTable() {
           </div>
         </div>
       </CardContent>
-      <RegisterPatientDialog open={isRegisterDialogOpen} onOpenChange={setRegisterDialogOpen} />
+      <RegisterPatientDialog open={isRegisterDialogOpen} onOpenChange={setRegisterDialogOpen} onPatientRegistered={onPatientRegistered} />
     </Card>
   )
 }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useTransition } from 'react';
@@ -24,9 +25,10 @@ interface ScheduleAppointmentDialogProps {
   onOpenChange: (open: boolean) => void;
   patients: Patient[];
   doctors: Doctor[];
+  onAppointmentScheduled: (newAppointment: Omit<Appointment, 'id' | 'status'>) => void;
 }
 
-export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctors }: ScheduleAppointmentDialogProps) {
+export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctors, onAppointmentScheduled }: ScheduleAppointmentDialogProps) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -79,29 +81,55 @@ export function ScheduleAppointmentDialog({ open, onOpenChange, patients, doctor
       return;
     }
 
-    const patientName = patients.find(p => p.id === patientId)?.name;
+    const patient = patients.find(p => p.id === patientId);
+    const doctor = doctors.find(d => d.id === doctorId);
+
+    if (!patient || !doctor) {
+        toast({ title: "Erreur", description: "Patient ou docteur introuvable.", variant: "destructive" });
+        return;
+    }
+
+    onAppointmentScheduled({
+        patientName: patient.name,
+        patientId,
+        doctorName: doctor.name,
+        service: appointmentType,
+        date: format(date, 'yyyy-MM-dd'),
+        time: selectedTime,
+    });
 
     toast({
       title: "Rendez-vous programmé",
-      description: `Le rendez-vous pour ${patientName} a été programmé le ${format(date, 'PPP', { locale: fr })} à ${selectedTime}.`,
+      description: `Le rendez-vous pour ${patient.name} a été programmé le ${format(date, 'PPP', { locale: fr })} à ${selectedTime}.`,
     });
     onOpenChange(false);
+    
     // Reset state
     setSuggestions([]);
     setPatientId('');
     setDoctorId('');
     setAppointmentType('');
     setSelectedTime('');
+    setDate(new Date());
+    setError(null);
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    onOpenChange(isOpen);
+    if (!isOpen) {
+        // Reset state when closing
+        setSuggestions([]);
+        setPatientId('');
+        setDoctorId('');
+        setAppointmentType('');
+        setSelectedTime('');
+        setDate(new Date());
+        setError(null);
+    }
+  }
+
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => {
-        onOpenChange(isOpen);
-        if(!isOpen) {
-            setSuggestions([]);
-            setError(null);
-        }
-    }}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>

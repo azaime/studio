@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -8,12 +9,12 @@ import {
 } from "@/components/ui/table"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { appointments } from "@/lib/data"
+import type { Appointment } from "@/lib/types"
 import Link from "next/link"
 import { Button } from "../ui/button"
 import { ArrowUpRight } from "lucide-react"
 
-export function UpcomingAppointments() {
+export function UpcomingAppointments({ appointments }: { appointments: Appointment[] }) {
     const upcomingAppointments = appointments.filter(a => a.status === 'Programmé').slice(0, 5);
   return (
     <Card>
@@ -21,7 +22,7 @@ export function UpcomingAppointments() {
             <div className="grid gap-2">
                 <CardTitle>Rendez-vous à venir</CardTitle>
                 <CardDescription>
-                Vous avez {upcomingAppointments.length} rendez-vous aujourd'hui.
+                Vous avez {upcomingAppointments.length} rendez-vous à venir.
                 </CardDescription>
             </div>
             <Button asChild size="sm" className="ml-auto gap-1">
