@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,34 +13,46 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { User } from '@/lib/types';
 
 interface CreateUserDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onUserCreated: (newUser: Omit<User, 'id' | 'lastLogin'>) => void;
+    onUserSaved: (user: Omit<User, 'id' | 'lastLogin'> & { id?: string }) => void;
+    user?: User | null;
 }
 
-export function CreateUserDialog({ open, onOpenChange, onUserCreated }: CreateUserDialogProps) {
+export function CreateUserDialog({ open, onOpenChange, onUserSaved, user }: CreateUserDialogProps) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [role, setRole] = useState<User['role'] | ''>('');
     const [password, setPassword] = useState('');
 
+    const isEditing = !!user;
+
+    useEffect(() => {
+        if (isEditing && user) {
+            setName(user.name);
+            setEmail(user.email);
+            setRole(user.role);
+            setPassword(''); // Ne pas pré-remplir le mot de passe pour des raisons de sécurité
+        } else {
+            setName('');
+            setEmail('');
+            setRole('');
+            setPassword('');
+        }
+    }, [user, isEditing, open]);
+
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (!name || !email || !role || !password) {
+        if (!name || !email || !role || (!isEditing && !password) ) {
             return;
         }
-        onUserCreated({ name, email, role: role as User['role'] });
+        onUserSaved({ id: user?.id, name, email, role: role as User['role'], password });
         onOpenChange(false);
-        // Reset form
-        setName('');
-        setEmail('');
-        setRole('');
-        setPassword('');
     };
 
     return (
@@ -48,9 +60,9 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: CreateUs
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
-                        <DialogTitle>Créer un nouveau compte</DialogTitle>
+                        <DialogTitle>{isEditing ? "Modifier le compte" : "Créer un nouveau compte"}</DialogTitle>
                         <DialogDescription>
-                            Remplissez les détails pour créer un nouveau compte utilisateur.
+                            {isEditing ? "Modifiez les détails ci-dessous." : "Remplissez les détails pour créer un nouveau compte utilisateur."}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -107,7 +119,8 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: CreateUs
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="col-span-3"
-                                required
+                                placeholder={isEditing ? "Laisser vide pour ne pas changer" : ""}
+                                required={!isEditing}
                             />
                         </div>
                     </div>
@@ -115,7 +128,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: CreateUs
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                             Annuler
                         </Button>
-                        <Button type="submit">Créer le compte</Button>
+                        <Button type="submit">{isEditing ? "Enregistrer les modifications" : "Créer le compte"}</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

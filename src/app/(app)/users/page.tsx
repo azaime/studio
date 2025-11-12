@@ -37,19 +37,38 @@ import {
   export default function UsersPage() {
     const { toast } = useToast()
     const [users, setUsers] = React.useState<User[]>(initialUsers);
-    const [isCreateUserOpen, setIsCreateUserOpen] = React.useState(false);
+    const [isUserDialogOpen, setIsUserDialogOpen] = React.useState(false);
+    const [editingUser, setEditingUser] = React.useState<User | null>(null);
 
-    const handleUserCreated = (newUser: Omit<User, 'id' | 'lastLogin'>) => {
-        const userEntry: User = {
-            ...newUser,
-            id: `USR${Date.now()}`,
-            lastLogin: 'À l\'instant'
-        };
-        setUsers(prev => [userEntry, ...prev]);
-        toast({
-            title: 'Compte créé',
-            description: `Le compte pour ${newUser.name} a été créé avec succès.`
-        });
+    const handleOpenCreateDialog = () => {
+        setEditingUser(null);
+        setIsUserDialogOpen(true);
+    }
+    
+    const handleOpenEditDialog = (user: User) => {
+        setEditingUser(user);
+        setIsUserDialogOpen(true);
+    }
+
+    const handleUserSaved = (userData: Omit<User, 'id' | 'lastLogin'> & { id?: string }) => {
+        if (userData.id) { // Editing existing user
+            setUsers(prev => prev.map(u => u.id === userData.id ? { ...u, ...userData } : u));
+            toast({
+                title: 'Compte mis à jour',
+                description: `Le compte pour ${userData.name} a été mis à jour avec succès.`
+            });
+        } else { // Creating new user
+            const userEntry: User = {
+                ...userData,
+                id: `USR${Date.now()}`,
+                lastLogin: 'À l\'instant'
+            };
+            setUsers(prev => [userEntry, ...prev]);
+            toast({
+                title: 'Compte créé',
+                description: `Le compte pour ${userData.name} a été créé avec succès.`
+            });
+        }
     }
 
     return (
@@ -63,7 +82,7 @@ import {
                     Créez et gérez les comptes et autorisations des utilisateurs.
                     </CardDescription>
                 </div>
-                <Button onClick={() => setIsCreateUserOpen(true)}>
+                <Button onClick={handleOpenCreateDialog}>
                     <UserPlus className="mr-2 h-4 w-4" />
                     Créer un compte
                 </Button>
@@ -101,7 +120,7 @@ import {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => toast({ title: "Modification activée", description: "Vous pouvez maintenant modifier cet utilisateur." })}>Modifier les autorisations</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleOpenEditDialog(user)}>Modifier les autorisations</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Réinitialiser le mot de passe</DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive" onClick={() => toast({ title: "Fonctionnalité non implémentée", variant: "destructive" })}>Désactiver le compte</DropdownMenuItem>
                       </DropdownMenuContent>
@@ -114,9 +133,10 @@ import {
         </CardContent>
       </Card>
       <CreateUserDialog 
-        open={isCreateUserOpen}
-        onOpenChange={setIsCreateUserOpen}
-        onUserCreated={handleUserCreated}
+        open={isUserDialogOpen}
+        onOpenChange={setIsUserDialogOpen}
+        onUserSaved={handleUserSaved}
+        user={editingUser}
       />
     </>
     )
