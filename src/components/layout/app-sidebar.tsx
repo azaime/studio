@@ -25,6 +25,13 @@ import {
   UserPlus,
   LogOut,
   Settings,
+  Baby,
+  HeartHandshake,
+  Ear,
+  Eye,
+  Scissors,
+  Scan,
+  Radio,
 } from "lucide-react"
 import { Button } from "../ui/button"
 
@@ -35,6 +42,13 @@ const navItems = [
   { href: "/emergency", icon: Siren, label: "Urgences" },
   { href: "/lab", icon: FlaskConical, label: "Labo" },
   { href: "/pharmacy", icon: Pill, label: "Pharmacie" },
+  { href: "/maternity", icon: HeartHandshake, label: "Maternité" },
+  { href: "/pediatrics", icon: Baby, label: "Pédiatrie" },
+  { href: "/ent", icon: Ear, label: "ORL" },
+  { href: "/ophthalmology", icon: Eye, label: "Ophtalmologie" },
+  { href: "/surgery", icon: Scissors, label: "Chirurgie" },
+  { href: "/radiography", icon: Scan, label: "Radiographie" },
+  { href: "/ultrasound", icon: Radio, label: "Échographie" },
   { href: "/users", icon: UserPlus, label: "Utilisateurs" },
 ]
 

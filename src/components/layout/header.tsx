@@ -27,6 +27,13 @@ const pageTitles: { [key: string]: string } = {
   emergency: 'Urgences',
   lab: 'Labo',
   pharmacy: 'Pharmacie',
+  maternity: 'Maternité',
+  pediatrics: 'Pédiatrie',
+  ent: 'ORL',
+  ophthalmology: 'Ophtalmologie',
+  surgery: 'Chirurgie',
+  radiography: 'Radiographie',
+  ultrasound: 'Échographie',
   users: 'Utilisateurs',
 };
 
