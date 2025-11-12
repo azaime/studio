@@ -6,16 +6,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, MoreHorizontal } from "lucide-react";
 import { ScheduleAppointmentDialog } from '@/components/appointments/schedule-appointment-dialog';
 import { patients as initialPatients, doctors } from '@/lib/data';
 import type { Appointment, Patient } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 const plannedSurgeriesData = [
-    { id: "SURG-001", patientName: "Mamadou Diallo", patientId: "PAT002", surgery: "Appendicectomie", date: "2024-08-15", time: "08:00", doctorName: "Dr. Fall", status: "Planifiée" },
-    { id: "SURG-002", patientName: "Awa Gueye", patientId: "PAT005", surgery: "Chirurgie de la cataracte", date: "2024-08-16", time: "10:00", doctorName: "Dr. Diop", status: "Planifiée" },
-    { id: "SURG-003", patientName: "Ibrahima Camara", patientId: "PAT004", surgery: "Hernie inguinale", date: "2024-08-14", time: "13:00", doctorName: "Dr. Fall", status: "Terminée" },
+    { id: "SURG-001", patientName: "Mamadou Diallo", patientId: "PAT002", surgery: "Appendicectomie", date: "2024-08-15", time: "08:00", doctorName: "Dr. Fall", status: "Planifiée" as 'Planifiée' | 'Terminée' },
+    { id: "SURG-002", patientName: "Awa Gueye", patientId: "PAT005", surgery: "Chirurgie de la cataracte", date: "2024-08-16", time: "10:00", doctorName: "Dr. Diop", status: "Planifiée" as 'Planifiée' | 'Terminée' },
+    { id: "SURG-003", patientName: "Ibrahima Camara", patientId: "PAT004", surgery: "Hernie inguinale", date: "2024-08-14", time: "13:00", doctorName: "Dr. Fall", status: "Terminée" as 'Planifiée' | 'Terminée' },
 ]
 
 export default function SurgeryPage() {
@@ -41,6 +42,21 @@ export default function SurgeryPage() {
       description: `L'intervention pour ${newSurgery.patientName} a été ajoutée.`,
     });
   };
+
+  const handleUpdateStatus = (surgeryId: string) => {
+      setPlannedSurgeries(prev => prev.map(s => s.id === surgeryId ? {...s, status: s.status === 'Planifiée' ? 'Terminée' : 'Planifiée' } : s));
+      toast({
+          title: "Statut mis à jour",
+          description: `Le statut de l'intervention a été modifié.`
+      });
+  }
+  
+  const handleViewDetails = (surgery: typeof plannedSurgeriesData[0]) => {
+      toast({
+          title: `Détails pour ${surgery.patientName}`,
+          description: `${surgery.surgery} par ${surgery.doctorName} le ${surgery.date} à ${surgery.time}.`
+      })
+  }
 
   return (
     <>
@@ -69,6 +85,7 @@ export default function SurgeryPage() {
                               <TableHead>Date & Heure</TableHead>
                               <TableHead>Chirurgien</TableHead>
                               <TableHead>Statut</TableHead>
+                              <TableHead><span className="sr-only">Actions</span></TableHead>
                           </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -82,6 +99,23 @@ export default function SurgeryPage() {
                                       <Badge variant={surgery.status === 'Terminée' ? 'secondary' : 'default'}>
                                           {surgery.status}
                                       </Badge>
+                                  </TableCell>
+                                  <TableCell>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                                            <MoreHorizontal className="h-4 w-4" />
+                                            <span className="sr-only">Menu</span>
+                                        </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                            <DropdownMenuItem onClick={() => handleViewDetails(surgery)}>Voir les détails</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleUpdateStatus(surgery.id)}>
+                                                {surgery.status === 'Planifiée' ? "Marquer comme terminée" : "Marquer comme planifiée"}
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                   </TableCell>
                               </TableRow>
                           ))}
