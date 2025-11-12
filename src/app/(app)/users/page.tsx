@@ -17,11 +17,12 @@ import {
     TableRow,
   } from "@/components/ui/table"
   import { Badge } from "@/components/ui/badge"
-  import { users } from "@/lib/data"
+  import { users as initialUsers, User } from "@/lib/data"
   import { MoreHorizontal, UserPlus } from "lucide-react"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
   import { Button } from "@/components/ui/button"
   import { useToast } from "@/hooks/use-toast"
+  import { CreateUserDialog } from "@/components/users/create-user-dialog"
 
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
@@ -35,15 +36,24 @@ import {
   
   export default function UsersPage() {
     const { toast } = useToast()
+    const [users, setUsers] = React.useState<User[]>(initialUsers);
+    const [isCreateUserOpen, setIsCreateUserOpen] = React.useState(false);
 
-    const handleCreateUser = () => {
+    const handleUserCreated = (newUser: Omit<User, 'id' | 'lastLogin'>) => {
+        const userEntry: User = {
+            ...newUser,
+            id: `USR${Date.now()}`,
+            lastLogin: 'À l\'instant'
+        };
+        setUsers(prev => [userEntry, ...prev]);
         toast({
-            title: "Fonctionnalité non implémentée",
-            description: "La création d'utilisateur sera bientôt disponible.",
-        })
+            title: 'Compte créé',
+            description: `Le compte pour ${newUser.name} a été créé avec succès.`
+        });
     }
 
     return (
+    <>
       <Card>
         <CardHeader>
             <div className="flex justify-between items-center">
@@ -53,7 +63,7 @@ import {
                     Créez et gérez les comptes et autorisations des utilisateurs.
                     </CardDescription>
                 </div>
-                <Button onClick={handleCreateUser}>
+                <Button onClick={() => setIsCreateUserOpen(true)}>
                     <UserPlus className="mr-2 h-4 w-4" />
                     Créer un compte
                 </Button>
@@ -103,5 +113,11 @@ import {
           </Table>
         </CardContent>
       </Card>
+      <CreateUserDialog 
+        open={isCreateUserOpen}
+        onOpenChange={setIsCreateUserOpen}
+        onUserCreated={handleUserCreated}
+      />
+    </>
     )
   }
