@@ -53,7 +53,7 @@ import type { Patient } from "@/lib/types"
 import { RegisterPatientDialog } from "./register-patient-dialog"
 import { useToast } from "@/hooks/use-toast"
 
-const ActionCell = ({ row }: { row: any }) => {
+const ActionCell = ({ row, onEdit }: { row: any, onEdit: (patient: Patient) => void }) => {
     const { toast } = useToast()
     const patient = row.original as Patient
 
@@ -62,6 +62,13 @@ const ActionCell = ({ row }: { row: any }) => {
         toast({
             title: "ID copié",
             description: `L'ID du patient ${patient.name} a été copié dans le presse-papiers.`,
+        })
+    }
+    
+    const viewDetails = () => {
+        toast({
+            title: "Détails du patient",
+            description: `Nom: ${patient.name}, Email: ${patient.email}`
         })
     }
 
@@ -79,86 +86,116 @@ const ActionCell = ({ row }: { row: any }) => {
                     Copier l'ID du patient
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Voir les détails</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Modifier le dossier</DropdownMenuItem>
+                <DropdownMenuItem onClick={viewDetails}>Voir les détails</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit(patient)}>Modifier le dossier</DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive" onClick={() => toast({ title: "Fonctionnalité non implémentée", variant: "destructive"})}>Supprimer</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )
 }
 
-const columns: ColumnDef<Patient>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Tout sélectionner"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Sélectionner la ligne"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nom
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "gender",
-    header: "Genre",
-  },
-  {
-    accessorKey: "age",
-    header: "Âge",
-  },
-  {
-    accessorKey: "lastVisit",
-    header: "Dernière visite",
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ActionCell,
-  },
-]
+
 
 interface PatientTableProps {
     patients: Patient[];
     onPatientRegistered: (newPatient: Omit<Patient, 'id' | 'lastVisit'>) => void;
+    onPatientUpdated: (updatedPatient: Patient) => void;
 }
 
-export function PatientTable({ patients, onPatientRegistered }: PatientTableProps) {
+export function PatientTable({ patients, onPatientRegistered, onPatientUpdated }: PatientTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [isRegisterDialogOpen, setRegisterDialogOpen] = React.useState(false)
+  const [editingPatient, setEditingPatient] = React.useState<Patient | null>(null)
+  const { toast } = useToast()
+
+  const handleEditClick = (patient: Patient) => {
+    setEditingPatient(patient);
+    setRegisterDialogOpen(true);
+  };
+  
+  const handleOpenCreateDialog = () => {
+    setEditingPatient(null);
+    setRegisterDialogOpen(true);
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    if (!open) {
+        setEditingPatient(null);
+    }
+    setRegisterDialogOpen(open);
+  }
+  
+  const handlePatientSaved = (patientData: Omit<Patient, 'id' | 'lastVisit'> & { id?: string }) => {
+    if (patientData.id) { // Editing
+      onPatientUpdated(patientData as Patient);
+    } else { // Creating
+      onPatientRegistered(patientData);
+    }
+  }
+  
+  const columns: ColumnDef<Patient>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Tout sélectionner"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Sélectionner la ligne"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Nom
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+    },
+    {
+      accessorKey: "gender",
+      header: "Genre",
+    },
+    {
+      accessorKey: "age",
+      header: "Âge",
+    },
+    {
+      accessorKey: "lastVisit",
+      header: "Dernière visite",
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => <ActionCell row={row} onEdit={handleEditClick} />,
+    },
+  ]
 
   const table = useReactTable({
     data: patients,
@@ -192,7 +229,7 @@ export function PatientTable({ patients, onPatientRegistered }: PatientTableProp
                 <CardTitle>Tous les patients</CardTitle>
                 <CardDescription>Une liste de tous les patients du système.</CardDescription>
             </div>
-            <Button onClick={() => setRegisterDialogOpen(true)}>
+            <Button onClick={handleOpenCreateDialog}>
                 <UserPlus className="mr-2 h-4 w-4" />
                 Enregistrer un nouveau patient
             </Button>
@@ -310,7 +347,12 @@ export function PatientTable({ patients, onPatientRegistered }: PatientTableProp
           </div>
         </div>
       </CardContent>
-      <RegisterPatientDialog open={isRegisterDialogOpen} onOpenChange={setRegisterDialogOpen} onPatientRegistered={onPatientRegistered} />
+      <RegisterPatientDialog 
+        open={isRegisterDialogOpen} 
+        onOpenChange={handleDialogClose} 
+        onPatientSaved={handlePatientSaved}
+        patient={editingPatient}
+        />
     </Card>
   )
 }

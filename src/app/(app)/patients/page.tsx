@@ -20,6 +20,10 @@ export default function PatientsPage() {
     ]);
   };
 
+  const updatePatient = (updatedPatient: Patient) => {
+    setPatients(prev => prev.map(p => p.id === updatedPatient.id ? updatedPatient : p));
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -28,7 +32,7 @@ export default function PatientsPage() {
           Consultez, ajoutez et gérez tous les dossiers des patients.
         </p>
       </div>
-      <PatientTable patients={patients} onPatientRegistered={addPatient} />
+      <PatientTable patients={patients} onPatientRegistered={addPatient} onPatientUpdated={updatePatient} />
     </div>
   );
 }
