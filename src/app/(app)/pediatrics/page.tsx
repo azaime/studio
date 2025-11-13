@@ -88,7 +88,7 @@ export default function PediatricsPage() {
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
                     <Button variant="outline" onClick={() => router.push('/patients')}><FileText className="mr-2 h-4 w-4"/> Dossiers pédiatriques</Button>
-                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Gestion de la salle de jeux')}><ToyBrick className="mr-2 h-4 w-4"/> Gérer la salle de jeux</Button>
+                    <Button variant="outline" onClick={() => handleFeatureComingSoon("Gestion de la salle de jeux")}><ToyBrick className="mr-2 h-4 w-4"/> Gérer la salle de jeux</Button>
                 </CardContent>
                 </Card>
             </div>
