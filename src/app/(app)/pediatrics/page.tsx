@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Syringe, ToyBrick, PlusCircle } from "lucide-react";
@@ -14,6 +15,7 @@ import { patients as initialPatients } from '@/lib/data';
 
 export default function PediatricsPage() {
     const { toast } = useToast();
+    const router = useRouter();
     const [isRegisteringPatient, setIsRegisteringPatient] = useState(false);
     const [patients, setPatients] = useState<Patient[]>(initialPatients);
 
@@ -85,7 +87,7 @@ export default function PediatricsPage() {
                     <CardDescription>Accès rapide aux dossiers et salles.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
-                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Dossiers pédiatriques')}><FileText className="mr-2 h-4 w-4"/> Dossiers pédiatriques</Button>
+                    <Button variant="outline" onClick={() => router.push('/patients')}><FileText className="mr-2 h-4 w-4"/> Dossiers pédiatriques</Button>
                     <Button variant="outline" onClick={() => handleFeatureComingSoon('Gestion de la salle de jeux')}><ToyBrick className="mr-2 h-4 w-4"/> Gérer la salle de jeux</Button>
                 </CardContent>
                 </Card>
