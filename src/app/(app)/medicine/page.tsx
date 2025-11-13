@@ -15,6 +15,13 @@ export default function MedicinePage() {
         description: "L'ajout de rapports sera bientôt disponible.",
     });
   };
+  
+  const handleResourceClick = (resourceName: string) => {
+    toast({
+        title: "Fonctionnalité à venir",
+        description: `L'accès aux '${resourceName}' sera bientôt disponible.`,
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -55,8 +62,8 @@ export default function MedicinePage() {
                 <CardDescription>Liens rapides et outils pour le personnel.</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
-                <Button variant="outline">Protocoles cliniques</Button>
-                <Button variant="outline">Base de données médicaments</Button>
+                <Button variant="outline" onClick={() => handleResourceClick('Protocoles cliniques')}>Protocoles cliniques</Button>
+                <Button variant="outline" onClick={() => handleResourceClick('Base de données médicaments')}>Base de données médicaments</Button>
               </CardContent>
             </Card>
         </div>
