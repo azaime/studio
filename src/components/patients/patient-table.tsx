@@ -171,6 +171,11 @@ export function PatientTable({ patients, onPatientRegistered }: PatientTableProp
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    initialState: {
+        pagination: {
+            pageSize: 3,
+        }
+    },
     state: {
       sorting,
       columnFilters,
