@@ -1,3 +1,7 @@
+
+"use client";
+
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Table,
@@ -7,10 +11,12 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table"
-import { users } from "@/lib/data";
+import { users as initialUsers, User } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
+import { CreateUserDialog } from '@/components/users/create-user-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 const getRoleBadgeVariant = (role: string) => {
     switch (role) {
@@ -23,14 +29,40 @@ const getRoleBadgeVariant = (role: string) => {
   }
 
 export default function PersonnelPage() {
+  const { toast } = useToast();
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
+
+  const handleUserSaved = (userData: Omit<User, 'id' | 'lastLogin'> & { id?: string }) => {
+    if (userData.id) { // Editing existing user
+        setUsers(prev => prev.map(u => u.id === userData.id ? { ...u, ...userData } : u));
+        toast({
+            title: 'Compte mis à jour',
+            description: `Le compte pour ${userData.name} a été mis à jour avec succès.`
+        });
+    } else { // Creating new user
+        const userEntry: User = {
+            ...userData,
+            id: `USR${Date.now()}`,
+            lastLogin: 'À l\'instant'
+        };
+        setUsers(prev => [userEntry, ...prev]);
+        toast({
+            title: 'Compte créé',
+            description: `Le compte pour ${userData.name} a été créé avec succès.`
+        });
+    }
+  }
+
   return (
+    <>
     <div className="space-y-6">
         <div className="flex justify-between items-center">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">Gestion du Personnel</h1>
                 <p className="text-muted-foreground">Gérer les informations et les horaires du personnel de l'hôpital.</p>
             </div>
-            <Button>
+            <Button onClick={() => setIsUserDialogOpen(true)}>
                 <UserPlus className="mr-2 h-4 w-4" />
                 Ajouter un membre
             </Button>
@@ -66,5 +98,12 @@ export default function PersonnelPage() {
             </CardContent>
         </Card>
     </div>
+    <CreateUserDialog 
+        open={isUserDialogOpen}
+        onOpenChange={setIsUserDialogOpen}
+        onUserSaved={handleUserSaved}
+        user={null}
+      />
+    </>
   );
 }
