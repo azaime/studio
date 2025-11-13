@@ -1,8 +1,21 @@
+
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function MedicinePage() {
+  const { toast } = useToast();
+
+  const handleAddReport = () => {
+    toast({
+        title: "Fonctionnalité à venir",
+        description: "L'ajout de rapports sera bientôt disponible.",
+    });
+  };
+
   return (
     <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -10,7 +23,7 @@ export default function MedicinePage() {
                 <h1 className="text-2xl font-bold tracking-tight">Service de Médecine Générale</h1>
                 <p className="text-muted-foreground">Prise en charge globale des patients et soins primaires.</p>
             </div>
-            <Button>
+            <Button onClick={handleAddReport}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Ajouter un rapport
             </Button>
