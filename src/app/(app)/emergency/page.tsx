@@ -30,10 +30,12 @@ import {
 import { emergencyTriage as initialEmergencyTriage } from "@/lib/data"
 import type { EmergencyTriage } from "@/lib/types";
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { MoreHorizontal } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast";
 
 type UrgencyLevel = 'Critique' | 'Urgent' | 'Standard' | 'Non-Urgent';
+type TriageStatus = 'En attente' | 'En traitement' | 'Sorti';
 
 const getUrgencyBadge = (urgency: UrgencyLevel) => {
     switch (urgency) {
@@ -77,6 +79,21 @@ export default function EmergencyPage() {
     toast({
         title: "Patient ajouté à la file d'attente",
         description: `${patientName} a été ajouté à la file d'attente des urgences.`,
+    });
+  }
+  
+  const handleUpdateStatus = (patientId: string, newStatus: TriageStatus) => {
+    setTriageQueue(prev => prev.map(p => p.id === patientId ? { ...p, status: newStatus } : p));
+    toast({
+        title: "Statut mis à jour",
+        description: `Le statut du patient a été mis à jour à "${newStatus}".`
+    });
+  }
+
+  const handleViewDetails = (patient: EmergencyTriage) => {
+    toast({
+        title: `Détails pour ${patient.patientName}`,
+        description: `Arrivée: ${patient.arrivalTime}, Urgence: ${patient.urgency}, Statut: ${patient.status}`
     });
   }
 
@@ -134,6 +151,7 @@ export default function EmergencyPage() {
                 <TableHead>Urgence</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead>Arrivée</TableHead>
+                <TableHead><span className="sr-only">Actions</span></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -143,6 +161,22 @@ export default function EmergencyPage() {
                     <TableCell><Badge variant={getUrgencyBadge(patient.urgency as UrgencyLevel)}>{patient.urgency}</Badge></TableCell>
                     <TableCell><Badge variant={patient.status === 'En traitement' ? 'outline' : 'secondary'}>{patient.status}</Badge></TableCell>
                     <TableCell>{patient.arrivalTime}</TableCell>
+                    <TableCell>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Menu</span>
+                            </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem onClick={() => handleViewDetails(patient)}>Voir les détails</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleUpdateStatus(patient.id, 'En traitement')}>Passer à 'En traitement'</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleUpdateStatus(patient.id, 'Sorti')}>Marquer comme 'Sorti'</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </TableCell>
                 </TableRow>
                 ))}
             </TableBody>
