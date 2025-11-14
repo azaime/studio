@@ -49,7 +49,7 @@ export default function ENTPage() {
                 <CardDescription>Enregistrer et consulter les audiogrammes.</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" onClick={() => handleFeatureComingSoon('Nouvel audiogramme')}>
+                <Button variant="secondary" className="w-full" onClick={() => handleFeatureComingSoon('Nouvel audiogramme')}>
                     <Mic className="mr-2 h-4 w-4" />
                     Nouvel audiogramme
                 </Button>
