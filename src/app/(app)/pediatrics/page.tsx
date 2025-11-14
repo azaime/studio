@@ -30,13 +30,6 @@ export default function PediatricsPage() {
         ]);
       };
 
-    const handleManageVaccines = () => {
-        toast({
-            title: "Fonctionnalité à venir",
-            description: "La gestion des vaccins sera bientôt disponible.",
-        });
-    }
-
     const handleFeatureComingSoon = (featureName: string) => {
         toast({
             title: "Fonctionnalité à venir",
@@ -78,7 +71,7 @@ export default function PediatricsPage() {
                     <div className="flex justify-between"><span>BCG</span> <Badge variant="secondary">À jour</Badge></div>
                     <div className="flex justify-between"><span>Polio</span> <Badge>En cours</Badge></div>
                     <div className="flex justify-between"><span>Rougeole</span> <Badge variant="outline">À venir</Badge></div>
-                    <Button size="sm" className="mt-2" onClick={handleManageVaccines}><Syringe className="mr-2 h-4 w-4"/> Gérer les vaccins</Button>
+                    <Button size="sm" className="mt-2" onClick={() => handleFeatureComingSoon('Gestion des vaccins')}><Syringe className="mr-2 h-4 w-4"/> Gérer les vaccins</Button>
                 </CardContent>
                 </Card>
                 <Card>
