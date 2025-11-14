@@ -28,6 +28,10 @@ export default function PediatricsPage() {
             }, 
             ...prev
         ]);
+        toast({
+            title: "Patient ajouté",
+            description: `${newPatient.name} a été ajouté à la liste des patients.`,
+        });
       };
 
     const handleFeatureComingSoon = (featureName: string) => {
@@ -86,7 +90,7 @@ export default function PediatricsPage() {
                 </Card>
             </div>
         </div>
-        <RegisterPatientDialog open={isRegisteringPatient} onOpenChange={setIsRegisteringPatient} onPatientRegistered={addPatient} />
+        <RegisterPatientDialog open={isRegisteringPatient} onOpenChange={setIsRegisteringPatient} onPatientSaved={addPatient} />
     </>
   );
 }
