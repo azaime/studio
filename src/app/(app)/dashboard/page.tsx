@@ -12,22 +12,22 @@ import { RegisterPatientDialog } from '@/components/patients/register-patient-di
 import { ScheduleAppointmentDialog } from '@/components/appointments/schedule-appointment-dialog';
 import { patients as initialPatients, doctors, appointments as initialAppointments } from '@/lib/data';
 import type { Patient, Appointment } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DashboardPage() {
   const [isRegisteringPatient, setIsRegisteringPatient] = useState(false);
   const [isSchedulingAppointment, setIsSchedulingAppointment] = useState(false);
   const [patients, setPatients] = useState<Patient[]>(initialPatients);
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+  const { toast } = useToast();
 
   const addPatient = (newPatient: Omit<Patient, 'id' | 'lastVisit'>) => {
-    setPatients(prev => [
-        { 
-            ...newPatient, 
-            id: `PAT${Date.now()}`,
-            lastVisit: new Date().toISOString().split('T')[0]
-        }, 
-        ...prev
-    ]);
+    const patientData = { 
+        ...newPatient, 
+        id: `PAT${Date.now()}`,
+        lastVisit: new Date().toISOString().split('T')[0]
+    };
+    setPatients(prev => [patientData, ...prev]);
   };
   
   const addAppointment = (newAppointment: Omit<Appointment, 'id' | 'status'>) => {
@@ -75,7 +75,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      <RegisterPatientDialog open={isRegisteringPatient} onOpenChange={setIsRegisteringPatient} onPatientRegistered={addPatient} />
+      <RegisterPatientDialog open={isRegisteringPatient} onOpenChange={setIsRegisteringPatient} onPatientSaved={addPatient} />
       <ScheduleAppointmentDialog open={isSchedulingAppointment} onOpenChange={setIsSchedulingAppointment} patients={patients} doctors={doctors} onAppointmentScheduled={addAppointment} />
     </>
   );

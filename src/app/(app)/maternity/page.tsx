@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from 'react';
@@ -92,7 +93,7 @@ export default function MaternityPage() {
       <RegisterPatientDialog 
         open={isRegisteringPatient} 
         onOpenChange={setIsRegisteringPatient} 
-        onPatientRegistered={handlePatientRegistered} 
+        onPatientSaved={handlePatientRegistered} 
       />
     </>
   );
