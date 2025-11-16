@@ -58,6 +58,13 @@ export default function UltrasoundPage() {
         });
     }
 
+    const handleEdit = (exam: UltrasoundExam) => {
+        toast({
+            title: "Fonctionnalité à venir",
+            description: `La modification de l'examen pour ${exam.patient} sera bientôt disponible.`
+        });
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -108,6 +115,7 @@ export default function UltrasoundPage() {
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                 <DropdownMenuItem onClick={() => handleViewDetails(item)}>Voir les détails</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleEdit(item)}>Modifier</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>
