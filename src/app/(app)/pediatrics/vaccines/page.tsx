@@ -6,9 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PlanCampaignDialog } from "@/components/pediatrics/plan-campaign-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 type VaccineCampaign = {
     id: string;
@@ -38,20 +39,55 @@ export default function VaccinesPage() {
     const { toast } = useToast();
     const [vaccineCampaigns, setVaccineCampaigns] = useState<VaccineCampaign[]>(initialVaccineCampaigns);
     const [isPlanCampaignDialogOpen, setIsPlanCampaignDialogOpen] = useState(false);
+    const [editingCampaign, setEditingCampaign] = useState<VaccineCampaign | null>(null);
 
-    const handlePlanCampaign = (newCampaign: Omit<VaccineCampaign, 'id' | 'coverage' | 'status'>) => {
-        const campaignToAdd: VaccineCampaign = {
-            ...newCampaign,
-            id: `VAC${Date.now()}`,
-            status: 'Planifiée',
-            coverage: 'N/A',
-        };
-        setVaccineCampaigns(prev => [campaignToAdd, ...prev]);
-        toast({
-            title: "Campagne planifiée",
-            description: `La campagne pour ${newCampaign.name} a été ajoutée.`,
-        });
+    const handleOpenCreateDialog = () => {
+        setEditingCampaign(null);
+        setIsPlanCampaignDialogOpen(true);
     };
+
+    const handleOpenEditDialog = (campaign: VaccineCampaign) => {
+        setEditingCampaign(campaign);
+        setIsPlanCampaignDialogOpen(true);
+    };
+
+    const handleDialogClose = (open: boolean) => {
+        if (!open) {
+            setEditingCampaign(null);
+        }
+        setIsPlanCampaignDialogOpen(open);
+    };
+
+    const handleCampaignSaved = (campaignData: Omit<VaccineCampaign, 'id' | 'coverage' | 'status'> & { id?: string }) => {
+        if (editingCampaign) {
+            // Editing existing campaign
+            setVaccineCampaigns(prev => prev.map(c => c.id === editingCampaign.id ? { ...c, ...campaignData } : c));
+            toast({
+                title: "Campagne mise à jour",
+                description: `La campagne pour ${campaignData.name} a été mise à jour.`,
+            });
+        } else {
+            // Creating new campaign
+            const campaignToAdd: VaccineCampaign = {
+                ...campaignData,
+                id: `VAC${Date.now()}`,
+                status: 'Planifiée',
+                coverage: 'N/A',
+            };
+            setVaccineCampaigns(prev => [campaignToAdd, ...prev]);
+            toast({
+                title: "Campagne planifiée",
+                description: `La campagne pour ${campaignData.name} a été ajoutée.`,
+            });
+        }
+    };
+    
+    const handleViewDetails = (campaign: VaccineCampaign) => {
+        toast({
+            title: `Détails pour la campagne ${campaign.name}`,
+            description: `Statut: ${campaign.status} | Cible: ${campaign.targetGroup} | Couverture: ${campaign.coverage}`
+        })
+    }
 
     return (
         <>
@@ -61,7 +97,7 @@ export default function VaccinesPage() {
                         <h1 className="text-2xl font-bold tracking-tight">Gestion des vaccins</h1>
                         <p className="text-muted-foreground">Suivez et mettez à jour le statut des campagnes de vaccination.</p>
                     </div>
-                    <Button onClick={() => setIsPlanCampaignDialogOpen(true)}>
+                    <Button onClick={handleOpenCreateDialog}>
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Planifier une campagne
                     </Button>
@@ -79,6 +115,7 @@ export default function VaccinesPage() {
                                     <TableHead>Statut de la campagne</TableHead>
                                     <TableHead>Groupe cible</TableHead>
                                     <TableHead>Taux de couverture</TableHead>
+                                    <TableHead><span className="sr-only">Actions</span></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -90,6 +127,21 @@ export default function VaccinesPage() {
                                         </TableCell>
                                         <TableCell>{campaign.targetGroup}</TableCell>
                                         <TableCell>{campaign.coverage}</TableCell>
+                                        <TableCell>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                    <span className="sr-only">Menu</span>
+                                                </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuItem onClick={() => handleViewDetails(campaign)}>Voir les détails</DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleOpenEditDialog(campaign)}>Modifier</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -99,8 +151,9 @@ export default function VaccinesPage() {
             </div>
             <PlanCampaignDialog
                 open={isPlanCampaignDialogOpen}
-                onOpenChange={setIsPlanCampaignDialogOpen}
-                onCampaignSaved={handlePlanCampaign}
+                onOpenChange={handleDialogClose}
+                onCampaignSaved={handleCampaignSaved}
+                campaign={editingCampaign}
             />
         </>
     );
