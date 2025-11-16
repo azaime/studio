@@ -44,10 +44,10 @@ const getStatusBadgeVariant = (status: string) => {
 export default function UltrasoundPage() {
     const { toast } = useToast();
 
-    const handleAddExam = () => {
+    const handleFeatureComingSoon = (feature: string) => {
         toast({
             title: "Fonctionnalité à venir",
-            description: "L'ajout d'examens d'échographie sera bientôt disponible.",
+            description: `La fonctionnalité '${feature}' sera bientôt disponible.`,
         });
     };
 
@@ -59,10 +59,7 @@ export default function UltrasoundPage() {
     }
 
     const handleEdit = (exam: UltrasoundExam) => {
-        toast({
-            title: "Fonctionnalité à venir",
-            description: `La modification de l'examen pour ${exam.patient} sera bientôt disponible.`
-        });
+        handleFeatureComingSoon(`La modification de l'examen pour ${exam.patient}`);
     }
 
     return (
@@ -72,7 +69,7 @@ export default function UltrasoundPage() {
                     <h1 className="text-2xl font-bold tracking-tight">Service d'Échographie</h1>
                     <p className="text-muted-foreground">Agenda du jour pour les examens d'échographie médicale.</p>
                 </div>
-                <Button onClick={handleAddExam}>
+                <Button onClick={() => handleFeatureComingSoon('Ajouter un examen')}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Ajouter un examen
                 </Button>
