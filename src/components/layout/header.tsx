@@ -38,6 +38,7 @@ const pageTitles: { [key: string]: string } = {
   medicine: 'Médecine',
   personnel: 'Personnel',
   administration: 'Administration',
+  analytics: 'Tableau de bord analytique',
   profile: 'Profil',
 };
 

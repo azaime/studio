@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, BarChart, Settings, PlusCircle } from "lucide-react";
@@ -10,6 +11,7 @@ import { AddTaskDialog } from "@/components/administration/add-task-dialog";
 
 export default function AdministrationPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);
 
   const handleFeatureComingSoon = (feature: string) => {
@@ -59,7 +61,7 @@ export default function AdministrationPage() {
                     <CardDescription>Visualisez les données clés de performance.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button variant="secondary" className="w-full" onClick={() => handleFeatureComingSoon('Accéder au tableau de bord analytique')}>
+                    <Button variant="secondary" className="w-full" onClick={() => router.push('/administration/analytics')}>
                         <BarChart className="mr-2 h-4 w-4" />
                         Accéder au tableau de bord analytique
                     </Button>
