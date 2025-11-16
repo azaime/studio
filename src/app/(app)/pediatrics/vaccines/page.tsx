@@ -58,10 +58,10 @@ export default function VaccinesPage() {
         setIsPlanCampaignDialogOpen(open);
     };
 
-    const handleCampaignSaved = (campaignData: Omit<VaccineCampaign, 'id' | 'coverage' | 'status'> & { id?: string }) => {
-        if (editingCampaign) {
+    const handleCampaignSaved = (campaignData: Omit<VaccineCampaign, 'id' | 'coverage'> & { id?: string }) => {
+        if (campaignData.id) {
             // Editing existing campaign
-            setVaccineCampaigns(prev => prev.map(c => c.id === editingCampaign.id ? { ...c, ...campaignData } : c));
+            setVaccineCampaigns(prev => prev.map(c => c.id === campaignData.id ? { ...c, ...campaignData, coverage: c.coverage } as VaccineCampaign : c));
             toast({
                 title: "Campagne mise à jour",
                 description: `La campagne pour ${campaignData.name} a été mise à jour.`,
