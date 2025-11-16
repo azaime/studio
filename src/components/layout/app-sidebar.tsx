@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -60,6 +61,8 @@ const navItems = [
 ]
 
 const profileItem = { href: "/profile", icon: User, label: "Profil" };
+const settingsItem = { href: "/administration/settings", icon: Settings, label: "Paramètres" };
+
 
 export function AppSidebar() {
   const pathname = usePathname()
@@ -90,9 +93,15 @@ export function AppSidebar() {
       <SidebarFooter className="p-2">
          <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Paramètres">
-                    <Settings />
-                    <span>Paramètres</span>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname.startsWith(settingsItem.href)}
+                  tooltip={settingsItem.label}
+                >
+                  <Link href={settingsItem.href}>
+                    <settingsItem.icon />
+                    <span>{settingsItem.label}</span>
+                  </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>

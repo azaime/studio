@@ -14,13 +14,6 @@ export default function AdministrationPage() {
   const router = useRouter();
   const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);
 
-  const handleFeatureComingSoon = (feature: string) => {
-    toast({
-        title: "Fonctionnalité à venir",
-        description: `La fonctionnalité '${feature}' sera bientôt disponible.`,
-    });
-  }
-
   const handleDownloadReport = () => {
     toast({
       title: "Téléchargement en cours",
@@ -73,7 +66,7 @@ export default function AdministrationPage() {
                     <CardDescription>Configurer les paramètres généraux de l'application.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button variant="outline" className="w-full" onClick={() => handleFeatureComingSoon('Gérer les paramètres')}>
+                    <Button variant="outline" className="w-full" onClick={() => router.push('/administration/settings')}>
                         <Settings className="mr-2 h-4 w-4" />
                         Gérer les paramètres
                     </Button>

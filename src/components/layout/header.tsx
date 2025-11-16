@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -39,6 +40,7 @@ const pageTitles: { [key: string]: string } = {
   personnel: 'Personnel',
   administration: 'Administration',
   analytics: 'Tableau de bord analytique',
+  settings: 'Paramètres',
   profile: 'Profil',
 };
 
@@ -82,7 +84,7 @@ export function Header() {
             <DropdownMenuLabel>Compte Admin</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild><Link href="/profile">Profil</Link></DropdownMenuItem>
-            <DropdownMenuItem>Paramètres</DropdownMenuItem>
+            <DropdownMenuItem asChild><Link href="/administration/settings">Paramètres</Link></DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild><Link href="/login">Déconnexion</Link></DropdownMenuItem>
