@@ -22,13 +22,6 @@ export default function OphthalmologyPage() {
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
 
 
-  const handleFeatureComingSoon = (feature: string) => {
-    toast({
-        title: "Fonctionnalité à venir",
-        description: `La fonctionnalité '${feature}' sera bientôt disponible.`,
-    });
-  };
-
   const handleAppointmentScheduled = (newAppointment: Omit<Appointment, 'id' | 'status'> & { id?: string }) => {
     if (editingAppointment) {
       setAppointments(prev => prev.map(app => app.id === editingAppointment.id ? { ...app, ...newAppointment } as Appointment : app));
