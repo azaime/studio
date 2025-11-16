@@ -75,6 +75,7 @@ export default function RadiographyPage() {
         description: `Une demande pour ${data.patientName} (${data.examType}) a été créée.`,
       });
     }
+    handleDialogClose(false);
   };
   
   const handleViewDetails = (request: RadiographyRequest) => {
