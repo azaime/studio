@@ -9,25 +9,11 @@ import { useToast } from "@/hooks/use-toast";
 export default function OphthalmologyPage() {
   const { toast } = useToast();
 
-  const handleNewConsultation = () => {
+  const handleFeatureComingSoon = (feature: string) => {
     toast({
         title: "Fonctionnalité à venir",
-        description: "La planification de nouvelles consultations sera bientôt disponible.",
+        description: `La fonctionnalité '${feature}' sera bientôt disponible.`,
     });
-  };
-
-  const handleManageVisionTests = () => {
-      toast({
-          title: "Fonctionnalité à venir",
-          description: "La gestion des tests de vision sera bientôt disponible.",
-      });
-  };
-
-  const handleViewSurgicalWaitlist = () => {
-      toast({
-          title: "Fonctionnalité à venir",
-          description: "La liste d'attente chirurgicale sera bientôt disponible.",
-      });
   };
 
   return (
@@ -39,7 +25,7 @@ export default function OphthalmologyPage() {
                     Soins des yeux, traitements médicaux et chirurgicaux des maladies oculaires.
                 </p>
             </div>
-            <Button onClick={handleNewConsultation}>
+            <Button onClick={() => handleFeatureComingSoon('Nouvelle consultation')}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Nouvelle consultation
             </Button>
@@ -60,11 +46,11 @@ export default function OphthalmologyPage() {
                     <CardDescription>Raccourcis pour les tâches courantes.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
-                    <Button variant="secondary" onClick={handleManageVisionTests}>
+                    <Button variant="secondary" onClick={() => handleFeatureComingSoon('Gérer les tests de vision')}>
                         <Eye className="mr-2 h-4 w-4" />
                         Gérer les tests de vision
                     </Button>
-                    <Button variant="outline" onClick={handleViewSurgicalWaitlist}>
+                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Voir la liste d\'attente chirurgicale')}>
                         <List className="mr-2 h-4 w-4" />
                         Voir la liste d'attente chirurgicale
                     </Button>
