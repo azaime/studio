@@ -24,7 +24,7 @@ export default function OphthalmologyPage() {
 
   const handleAppointmentScheduled = (newAppointment: Omit<Appointment, 'id' | 'status'> & { id?: string }) => {
     if (editingAppointment) {
-      setAppointments(prev => prev.map(app => app.id === editingAppointment.id ? { ...app, ...newAppointment } as Appointment : app));
+      setAppointments(prev => prev.map(app => app.id === editingAppointment.id ? { ...editingAppointment, ...newAppointment } : app));
       toast({
         title: 'Rendez-vous mis à jour',
         description: `Le rendez-vous pour ${newAppointment.patientName} a été mis à jour.`,
