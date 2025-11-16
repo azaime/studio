@@ -9,17 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 export default function AdministrationPage() {
   const { toast } = useToast();
 
-  const handleAddTask = () => {
-    toast({
-        title: "Fonctionnalité à venir",
-        description: "L'ajout de tâches sera bientôt disponible.",
-    });
-  };
-  
   const handleFeatureComingSoon = (feature: string) => {
     toast({
         title: "Fonctionnalité à venir",
-        description: `La section '${feature}' sera bientôt disponible.`,
+        description: `La fonctionnalité '${feature}' sera bientôt disponible.`,
     });
   }
 
@@ -30,7 +23,7 @@ export default function AdministrationPage() {
                 <h1 className="text-2xl font-bold tracking-tight">Administration</h1>
                 <p className="text-muted-foreground">Outils et rapports pour l'administration de l'hôpital.</p>
             </div>
-            <Button onClick={handleAddTask}>
+            <Button onClick={() => handleFeatureComingSoon('Ajouter une tâche')}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Ajouter une tâche
             </Button>
@@ -42,7 +35,7 @@ export default function AdministrationPage() {
                     <CardDescription>Générez et téléchargez les rapports d'activité.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button className="w-full" onClick={() => handleFeatureComingSoon('Télécharger le rapport')}>
+                    <Button className="w-full" onClick={() => handleFeatureComingSoon('Télécharger le rapport de Juillet')}>
                         <Download className="mr-2 h-4 w-4" />
                         Télécharger le rapport de Juillet
                     </Button>
