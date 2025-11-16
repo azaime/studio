@@ -36,6 +36,7 @@ export default function RadiographyPage() {
   const { toast } = useToast();
   const [isRequestingExam, setIsRequestingExam] = useState(false);
   const [radiographyRequests, setRadiographyRequests] = useState<RadiographyRequest[]>(initialRadiographyRequests);
+  const [editingRequest, setEditingRequest] = useState<RadiographyRequest | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUploadClick = () => {
@@ -59,19 +60,26 @@ export default function RadiographyPage() {
     });
   };
 
-  const handleExamRequested = (data: { patientName: string, examType: string }) => {
-    const newRequest: RadiographyRequest = {
-        id: `RAD${Date.now()}`,
-        patientName: data.patientName,
-        examType: data.examType,
-        requestDate: new Date().toISOString().split('T')[0],
-        status: 'En attente'
-    };
-    setRadiographyRequests(prev => [newRequest, ...prev]);
-    toast({
-      title: "Demande d'examen créée",
-      description: `Une demande pour ${data.patientName} (${data.examType}) a été créée.`,
-    });
+  const handleExamRequested = (data: Omit<RadiographyRequest, 'id' | 'requestDate' | 'status'> & { id?: string }) => {
+    if (editingRequest) { // Editing
+      setRadiographyRequests(prev => prev.map(req => req.id === editingRequest.id ? { ...req, ...data } : req));
+      toast({
+        title: "Demande mise à jour",
+        description: `La demande pour ${data.patientName} a été mise à jour.`,
+      });
+    } else { // Creating
+      const newRequest: RadiographyRequest = {
+          ...data,
+          id: `RAD${Date.now()}`,
+          requestDate: new Date().toISOString().split('T')[0],
+          status: 'En attente'
+      };
+      setRadiographyRequests(prev => [newRequest, ...prev]);
+      toast({
+        title: "Demande d'examen créée",
+        description: `Une demande pour ${data.patientName} (${data.examType}) a été créée.`,
+      });
+    }
   };
   
   const handleViewDetails = (request: RadiographyRequest) => {
@@ -88,6 +96,23 @@ export default function RadiographyPage() {
         description: `La demande ${requestId} est maintenant ${status}.`
     });
   };
+  
+  const handleOpenEditDialog = (request: RadiographyRequest) => {
+    setEditingRequest(request);
+    setIsRequestingExam(true);
+  };
+
+  const handleOpenCreateDialog = () => {
+    setEditingRequest(null);
+    setIsRequestingExam(true);
+  };
+  
+  const handleDialogClose = (open: boolean) => {
+    if (!open) {
+      setEditingRequest(null);
+    }
+    setIsRequestingExam(open);
+  }
 
   return (
     <>
@@ -97,7 +122,7 @@ export default function RadiographyPage() {
                   <h1 className="text-2xl font-bold tracking-tight">Service de Radiographie</h1>
                   <p className="text-muted-foreground">Gestion des examens d'imagerie par rayons X.</p>
               </div>
-              <Button onClick={() => setIsRequestingExam(true)}>
+              <Button onClick={handleOpenCreateDialog}>
                   <PlusCircle className="mr-2 h-4 w-4" />
                   Nouvelle demande
               </Button>
@@ -143,6 +168,7 @@ export default function RadiographyPage() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem onClick={() => handleViewDetails(request)}>Voir les détails</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleOpenEditDialog(request)}>Modifier</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleUpdateRequest(request.id, 'En cours')}>Marquer comme 'En cours'</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleUpdateRequest(request.id, 'Terminé')}>Marquer comme 'Terminé'</DropdownMenuItem>
                             <DropdownMenuItem className="text-destructive" onClick={() => handleUpdateRequest(request.id, 'Annulé')}>Annuler la demande</DropdownMenuItem>
@@ -188,8 +214,9 @@ export default function RadiographyPage() {
       </div>
       <RequestExamDialog 
         open={isRequestingExam}
-        onOpenChange={setIsRequestingExam}
+        onOpenChange={handleDialogClose}
         onExamRequested={handleExamRequested}
+        request={editingRequest}
       />
     </>
   );
