@@ -143,11 +143,11 @@ export default function OphthalmologyPage() {
                     <CardDescription>Raccourcis pour les tâches courantes.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
-                    <Button variant="secondary" onClick={() => handleFeatureComingSoon('Gérer les tests de vision')}>
+                    <Button variant="secondary" onClick={() => handleFeatureComingSoon("Gérer les tests de vision")}>
                         <Eye className="mr-2 h-4 w-4" />
                         Gérer les tests de vision
                     </Button>
-                    <Button variant="outline" onClick={() => handleFeatureComingSoon('Voir la liste d\'attente chirurgicale')}>
+                    <Button variant="outline" onClick={() => handleFeatureComingSoon("Voir la liste d'attente chirurgicale")}>
                         <List className="mr-2 h-4 w-4" />
                         Voir la liste d'attente chirurgicale
                     </Button>
