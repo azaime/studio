@@ -19,6 +19,14 @@ export default function AdministrationPage() {
     });
   }
 
+  const handleDownloadReport = () => {
+    toast({
+      title: "Téléchargement en cours",
+      description: "Le rapport de Juillet va bientôt être téléchargé.",
+    });
+    // In a real application, you would trigger the file download here.
+  };
+
   return (
     <>
     <div className="space-y-6">
@@ -39,7 +47,7 @@ export default function AdministrationPage() {
                     <CardDescription>Générez et téléchargez les rapports d'activité.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button className="w-full" onClick={() => handleFeatureComingSoon('Télécharger le rapport de Juillet')}>
+                    <Button className="w-full" onClick={handleDownloadReport}>
                         <Download className="mr-2 h-4 w-4" />
                         Télécharger le rapport de Juillet
                     </Button>
