@@ -66,7 +66,7 @@ export default function EmergencyPage() {
         id: `TRI${Date.now()}`,
         patientName,
         arrivalTime: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        urgency: urgency as 'Critique' | 'Urgent' | 'Non-Urgent',
+        urgency: urgency as 'Critique' | 'Urgent' | 'Standard' | 'Non-Urgent',
         status: 'En attente'
     };
 

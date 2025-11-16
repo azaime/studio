@@ -49,7 +49,7 @@ export type EmergencyTriage = {
   id: string;
   patientName: string;
   arrivalTime: string;
-  urgency: 'Critique' | 'Urgent' | 'Non-Urgent';
+  urgency: 'Critique' | 'Urgent' | 'Standard' | 'Non-Urgent';
   status: 'En attente' | 'En traitement' | 'Sorti';
 }
 
