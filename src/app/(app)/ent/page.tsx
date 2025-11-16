@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Mic, Video, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import type { Appointment } from "@/lib/types";
 
 export default function ENTPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [isScheduling, setIsScheduling] = useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
@@ -58,7 +60,7 @@ export default function ENTPage() {
                   <CardDescription>Planifier et gérer les rendez-vous ORL.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" onClick={() => handleFeatureComingSoon('Voir l\'agenda')}>
+                  <Button className="w-full" onClick={() => router.push('/appointments')}>
                       <Calendar className="mr-2 h-4 w-4" />
                       Voir l'agenda
                   </Button>
