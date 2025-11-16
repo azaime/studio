@@ -1,13 +1,19 @@
 
 "use client";
 
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye, PlusCircle, List } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ScheduleAppointmentDialog } from '@/components/appointments/schedule-appointment-dialog';
+import { patients, doctors } from '@/lib/data';
+import type { Appointment } from '@/lib/types';
 
 export default function OphthalmologyPage() {
   const { toast } = useToast();
+  const [isScheduling, setIsScheduling] = useState(false);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   const handleFeatureComingSoon = (feature: string) => {
     toast({
@@ -16,7 +22,21 @@ export default function OphthalmologyPage() {
     });
   };
 
+  const handleAppointmentScheduled = (newAppointment: Omit<Appointment, 'id' | 'status'>) => {
+    const appointmentData: Appointment = {
+      ...newAppointment,
+      id: `APP-OPHT-${Date.now()}`,
+      status: 'Programmé'
+    };
+    setAppointments(prev => [...prev, appointmentData]);
+    toast({
+      title: 'Rendez-vous planifié',
+      description: `Le rendez-vous pour ${newAppointment.patientName} a été créé.`,
+    });
+  };
+
   return (
+    <>
     <div className="space-y-6">
         <div className="flex justify-between items-center">
             <div>
@@ -25,7 +45,7 @@ export default function OphthalmologyPage() {
                     Soins des yeux, traitements médicaux et chirurgicaux des maladies oculaires.
                 </p>
             </div>
-            <Button onClick={() => handleFeatureComingSoon('Nouvelle consultation')}>
+            <Button onClick={() => setIsScheduling(true)}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Nouvelle consultation
             </Button>
@@ -37,7 +57,15 @@ export default function OphthalmologyPage() {
                     <CardDescription>Liste des prochains rendez-vous en ophtalmologie.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <p>Aucune consultation à venir pour le moment.</p>
+                    {appointments.length > 0 ? (
+                        <ul>
+                            {appointments.map(app => (
+                                <li key={app.id}>{app.patientName} avec {app.doctorName} le {app.date}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>Aucune consultation à venir pour le moment.</p>
+                    )}
                 </CardContent>
             </Card>
              <Card>
@@ -58,5 +86,13 @@ export default function OphthalmologyPage() {
             </Card>
         </div>
     </div>
+    <ScheduleAppointmentDialog
+        open={isScheduling}
+        onOpenChange={setIsScheduling}
+        patients={patients}
+        doctors={doctors}
+        onAppointmentScheduled={handleAppointmentScheduled}
+      />
+    </>
   );
 }
