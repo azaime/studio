@@ -8,7 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, DropdownMenuPortal } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuPortal } from "@/components/ui/dropdown-menu";
+import { AddToyDialog } from "@/components/pediatrics/add-toy-dialog";
+import { format } from "date-fns";
 
 type Toy = {
     id: string;
@@ -38,11 +40,20 @@ const getStatusBadgeVariant = (status: Toy['status']) => {
 export default function PlayroomPage() {
     const { toast } = useToast();
     const [toys, setToys] = useState<Toy[]>(initialToys);
+    const [isAddToyDialogOpen, setIsAddToyDialogOpen] = useState(false);
 
-    const handleAddToy = () => {
+    const handleAddToy = (toyData: { name: string }) => {
+        const newToy: Toy = {
+            id: `TOY${Date.now()}`,
+            name: toyData.name,
+            status: 'Propre',
+            lastCleaned: format(new Date(), 'yyyy-MM-dd')
+        };
+
+        setToys(prevToys => [newToy, ...prevToys]);
         toast({
-            title: "Fonctionnalité à venir",
-            description: "L'ajout de nouveaux jouets sera bientôt disponible.",
+            title: "Jouet ajouté",
+            description: `Le jouet "${toyData.name}" a été ajouté à l'inventaire.`,
         });
     };
 
@@ -55,7 +66,7 @@ export default function PlayroomPage() {
 
     const handleUpdateStatus = (toyId: string, newStatus: Toy['status']) => {
         setToys(prevToys => prevToys.map(toy => 
-            toy.id === toyId ? { ...toy, status: newStatus } : toy
+            toy.id === toyId ? { ...toy, status: newStatus, lastCleaned: format(new Date(), 'yyyy-MM-dd') } : toy
         ));
         toast({
             title: "Statut mis à jour",
@@ -64,71 +75,78 @@ export default function PlayroomPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Gestion de la salle de jeux</h1>
-                    <p className="text-muted-foreground">Suivi de l'inventaire et de la propreté des jouets.</p>
+        <>
+            <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">Gestion de la salle de jeux</h1>
+                        <p className="text-muted-foreground">Suivi de l'inventaire et de la propreté des jouets.</p>
+                    </div>
+                    <Button onClick={() => setIsAddToyDialogOpen(true)}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Ajouter un jouet
+                    </Button>
                 </div>
-                <Button onClick={handleAddToy}>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Ajouter un jouet
-                </Button>
-            </div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Inventaire des jouets</CardTitle>
-                    <CardDescription>Liste de tous les jouets dans la salle de jeux.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Jouet</TableHead>
-                                <TableHead>Statut</TableHead>
-                                <TableHead>Dernier nettoyage</TableHead>
-                                <TableHead><span className="sr-only">Actions</span></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {toys.map(toy => (
-                                <TableRow key={toy.id}>
-                                    <TableCell className="font-medium">{toy.name}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={getStatusBadgeVariant(toy.status)}>{toy.status}</Badge>
-                                    </TableCell>
-                                    <TableCell>{toy.lastCleaned}</TableCell>
-                                    <TableCell>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                    <span className="sr-only">Menu</span>
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem onClick={() => handleViewDetails(toy)}>Voir les détails</DropdownMenuItem>
-                                                <DropdownMenuSub>
-                                                    <DropdownMenuSubTrigger>Modifier le statut</DropdownMenuSubTrigger>
-                                                    <DropdownMenuPortal>
-                                                        <DropdownMenuSubContent>
-                                                            <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'Propre')}>Propre</DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'En usage')}>En usage</DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'À nettoyer')}>À nettoyer</DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'Cassé')}>Cassé</DropdownMenuItem>
-                                                        </DropdownMenuSubContent>
-                                                    </DropdownMenuPortal>
-                                                </DropdownMenuSub>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Inventaire des jouets</CardTitle>
+                        <CardDescription>Liste de tous les jouets dans la salle de jeux.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Jouet</TableHead>
+                                    <TableHead>Statut</TableHead>
+                                    <TableHead>Dernier nettoyage</TableHead>
+                                    <TableHead><span className="sr-only">Actions</span></TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-        </div>
+                            </TableHeader>
+                            <TableBody>
+                                {toys.map(toy => (
+                                    <TableRow key={toy.id}>
+                                        <TableCell className="font-medium">{toy.name}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={getStatusBadgeVariant(toy.status)}>{toy.status}</Badge>
+                                        </TableCell>
+                                        <TableCell>{toy.lastCleaned}</TableCell>
+                                        <TableCell>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                        <span className="sr-only">Menu</span>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuItem onClick={() => handleViewDetails(toy)}>Voir les détails</DropdownMenuItem>
+                                                    <DropdownMenuSub>
+                                                        <DropdownMenuSubTrigger>Modifier le statut</DropdownMenuSubTrigger>
+                                                        <DropdownMenuPortal>
+                                                            <DropdownMenuSubContent>
+                                                                <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'Propre')}>Propre</DropdownMenuItem>
+                                                                <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'En usage')}>En usage</DropdownMenuItem>
+                                                                <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'À nettoyer')}>À nettoyer</DropdownMenuItem>
+                                                                <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'Cassé')}>Cassé</DropdownMenuItem>
+                                                            </DropdownMenuSubContent>
+                                                        </DropdownMenuPortal>
+                                                    </DropdownMenuSub>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </div>
+            <AddToyDialog
+                open={isAddToyDialogOpen}
+                onOpenChange={setIsAddToyDialogOpen}
+                onToySaved={handleAddToy}
+            />
+        </>
     );
 }
