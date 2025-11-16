@@ -68,3 +68,9 @@ export type UltrasoundExam = {
     exam: string;
     status: 'Terminé' | 'En cours' | 'En attente' | 'À venir';
 };
+
+export type UpcomingDelivery = {
+    patient: string;
+    term: string;
+    status: "Programmé" | "Observation" | "Admis";
+};

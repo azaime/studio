@@ -6,11 +6,14 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Baby, BedDouble, Stethoscope, PlusCircle } from "lucide-react";
+import { Baby, BedDouble, Stethoscope, PlusCircle, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RegisterPatientDialog } from '@/components/patients/register-patient-dialog';
-import type { Patient } from '@/lib/types';
+import type { Patient, UpcomingDelivery } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { EditDeliveryDialog } from '@/components/maternity/edit-delivery-dialog';
+
 
 const maternityData = {
     stats: [
@@ -19,21 +22,49 @@ const maternityData = {
         { title: "Consultations prénatales", value: "25", icon: Stethoscope },
     ],
     upcomingDeliveries: [
-        { patient: "Aïssatou Ba", term: "39 sem.", status: "Programmé" },
-        { patient: "Marième Fall", term: "40 sem.", status: "Observation" },
-        { patient: "Ndeye Diop", term: "38 sem.", status: "Programmé" },
+        { patient: "Aïssatou Ba", term: "39 sem.", status: "Programmé" as UpcomingDelivery['status'] },
+        { patient: "Marième Fall", term: "40 sem.", status: "Observation" as UpcomingDelivery['status'] },
+        { patient: "Ndeye Diop", term: "38 sem.", status: "Programmé" as UpcomingDelivery['status'] },
     ]
 }
 
 export default function MaternityPage() {
   const [isRegisteringPatient, setIsRegisteringPatient] = useState(false);
+  const [deliveries, setDeliveries] = useState<UpcomingDelivery[]>(maternityData.upcomingDeliveries);
+  const [editingDelivery, setEditingDelivery] = useState<UpcomingDelivery | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const handlePatientRegistered = (newPatient: Omit<Patient, 'id' | 'lastVisit'>) => {
     // In a real application, you would likely add this patient to a global state
     // or refetch the patient list. For now, we'll just show a confirmation.
     console.log("New patient registered in maternity:", newPatient);
+     toast({
+        title: "Patiente ajoutée",
+        description: `${newPatient.name} a été enregistrée dans le service de maternité.`,
+    });
   };
+
+  const handleOpenEditDialog = (delivery: UpcomingDelivery) => {
+    setEditingDelivery(delivery);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeliverySaved = (updatedDelivery: UpcomingDelivery) => {
+    setDeliveries(prev => prev.map(d => d.patient === updatedDelivery.patient ? updatedDelivery : d));
+    toast({
+      title: "Statut mis à jour",
+      description: `Le statut pour ${updatedDelivery.patient} est maintenant "${updatedDelivery.status}".`,
+    });
+  };
+
+  const getStatusBadgeVariant = (status: UpcomingDelivery['status']) => {
+    switch (status) {
+        case "Observation": return "destructive";
+        case "Admis": return "default";
+        default: return "secondary";
+    }
+  }
 
   return (
     <>
@@ -73,15 +104,30 @@ export default function MaternityPage() {
                           <TableHead>Patiente</TableHead>
                           <TableHead>Terme</TableHead>
                           <TableHead>Statut</TableHead>
+                          <TableHead><span className="sr-only">Actions</span></TableHead>
                       </TableRow>
                   </TableHeader>
                   <TableBody>
-                      {maternityData.upcomingDeliveries.map(delivery => (
+                      {deliveries.map(delivery => (
                           <TableRow key={delivery.patient}>
                               <TableCell className="font-medium">{delivery.patient}</TableCell>
                               <TableCell>{delivery.term}</TableCell>
                               <TableCell>
-                                  <Badge variant={delivery.status === "Observation" ? "destructive" : "default"}>{delivery.status}</Badge>
+                                  <Badge variant={getStatusBadgeVariant(delivery.status)}>{delivery.status}</Badge>
+                              </TableCell>
+                              <TableCell>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                                            <MoreHorizontal className="h-4 w-4" />
+                                            <span className="sr-only">Menu</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                        <DropdownMenuItem onClick={() => handleOpenEditDialog(delivery)}>Modifier</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                               </TableCell>
                           </TableRow>
                       ))}
@@ -94,6 +140,12 @@ export default function MaternityPage() {
         open={isRegisteringPatient} 
         onOpenChange={setIsRegisteringPatient} 
         onPatientSaved={handlePatientRegistered} 
+      />
+      <EditDeliveryDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        delivery={editingDelivery}
+        onDeliverySaved={handleDeliverySaved}
       />
     </>
   );
