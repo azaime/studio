@@ -1,3 +1,7 @@
+
+"use client";
+
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -14,10 +18,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { labRequests } from "@/lib/data"
+import { labRequests as initialLabRequests, LabRequest } from "@/lib/data"
 import { MoreHorizontal } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuPortal, DropdownMenuSubContent } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { useToast } from '@/hooks/use-toast';
 
 const getStatusBadgeVariant = (status: string) => {
   switch (status) {
@@ -29,6 +34,26 @@ const getStatusBadgeVariant = (status: string) => {
 }
 
 export default function LabPage() {
+  const [labRequests, setLabRequests] = useState<LabRequest[]>(initialLabRequests);
+  const { toast } = useToast();
+
+  const handleViewResults = (request: LabRequest) => {
+    toast({
+        title: `Résultats pour ${request.patientName}`,
+        description: request.status === 'Terminé' 
+            ? `Les résultats pour "${request.test}" sont disponibles. Ex: Hémoglobine: 14 g/dL.`
+            : `Les résultats pour "${request.test}" ne sont pas encore disponibles.`,
+    });
+  };
+  
+  const handleUpdateStatus = (requestId: string, status: LabRequest['status']) => {
+    setLabRequests(prev => prev.map(req => req.id === requestId ? { ...req, status } : req));
+    toast({
+        title: "Statut mis à jour",
+        description: `Le statut de la demande a été mis à jour à "${status}".`
+    });
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -71,8 +96,17 @@ export default function LabPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>Voir les résultats</DropdownMenuItem>
-                      <DropdownMenuItem>Mettre à jour le statut</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleViewResults(request)}>Voir les résultats</DropdownMenuItem>
+                       <DropdownMenuSub>
+                          <DropdownMenuSubTrigger>Mettre à jour le statut</DropdownMenuSubTrigger>
+                          <DropdownMenuPortal>
+                              <DropdownMenuSubContent>
+                                  <DropdownMenuItem onClick={() => handleUpdateStatus(request.id, 'En attente')}>En attente</DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleUpdateStatus(request.id, 'En cours')}>En cours</DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleUpdateStatus(request.id, 'Terminé')}>Terminé</DropdownMenuItem>
+                              </DropdownMenuSubContent>
+                          </DropdownMenuPortal>
+                      </DropdownMenuSub>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
