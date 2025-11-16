@@ -66,6 +66,13 @@ export default function MaternityPage() {
     }
   }
 
+  const handleViewDetails = (delivery: UpcomingDelivery) => {
+    toast({
+        title: `Détails pour ${delivery.patient}`,
+        description: `Terme: ${delivery.term}, Statut: ${delivery.status}`
+    });
+  };
+
   return (
     <>
       <div className="space-y-6">
@@ -125,6 +132,7 @@ export default function MaternityPage() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                        <DropdownMenuItem onClick={() => handleViewDetails(delivery)}>Voir les détails</DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => handleOpenEditDialog(delivery)}>Modifier</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
