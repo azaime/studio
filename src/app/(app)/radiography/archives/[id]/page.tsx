@@ -26,14 +26,23 @@ export default function ReportPage() {
   const report = archiveData.find(item => item.id === reportId);
 
   const handleDownload = () => {
-    if (!reportRef.current) return;
+    const input = reportRef.current;
+    if (!input) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de trouver le contenu du rapport à télécharger.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     toast({
-        title: "Génération du PDF...",
-        description: "Le rapport va bientôt être téléchargé.",
+      title: "Génération du PDF...",
+      description: "Le rapport va bientôt être téléchargé.",
     });
 
-    html2canvas(reportRef.current, { scale: 2 }).then((canvas) => {
+    html2canvas(input, { scale: 2 })
+      .then((canvas) => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -42,24 +51,29 @@ export default function ReportPage() {
         const canvasHeight = canvas.height;
         const ratio = canvasWidth / canvasHeight;
         const width = pdfWidth - 20; // with margin
-        const height = width / ratio;
-
+        let height = width / ratio;
         let position = 10;
         
         if (height > pdfHeight - 20) {
-             pdf.addImage(imgData, 'PNG', 10, position, width, height, undefined, 'FAST');
-        } else {
-             position = (pdfHeight - height) / 2;
-             pdf.addImage(imgData, 'PNG', 10, position, width, height, undefined, 'FAST');
+            height = pdfHeight - 20; // cap height
         }
         
+        pdf.addImage(imgData, 'PNG', 10, position, width, height, undefined, 'FAST');
         pdf.save(`rapport_${report?.id}.pdf`);
 
-         toast({
-            title: "Téléchargement terminé",
-            description: "Le rapport PDF a été téléchargé.",
+        toast({
+          title: "Téléchargement terminé",
+          description: "Le rapport PDF a été téléchargé.",
         });
-    });
+      })
+      .catch(err => {
+        console.error("Erreur lors de la génération du PDF:", err);
+        toast({
+          title: "Erreur de téléchargement",
+          description: "Une erreur s'est produite lors de la génération du PDF.",
+          variant: "destructive",
+        });
+      });
   }
 
   if (!report) {
@@ -93,36 +107,38 @@ export default function ReportPage() {
             </div>
         </div>
 
-      <Card ref={reportRef}>
-        <CardHeader>
-            <div>
-                <CardTitle>Rapport d'imagerie - {report.examType}</CardTitle>
-                <CardDescription>ID du rapport: {report.id}</CardDescription>
+      <div ref={reportRef} className="bg-background p-4 sm:p-6 rounded-lg">
+        <Card>
+          <CardHeader>
+              <div>
+                  <CardTitle>Rapport d'imagerie - {report.examType}</CardTitle>
+                  <CardDescription>ID du rapport: {report.id}</CardDescription>
+              </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-3 gap-4 text-sm">
+              <div className="space-y-1">
+                  <p className="font-medium">Patient</p>
+                  <p className="text-muted-foreground">{report.patientName}</p>
+              </div>
+              <div className="space-y-1">
+                  <p className="font-medium">Date de l'examen</p>
+                  <p className="text-muted-foreground">{report.date}</p>
+              </div>
+               <div className="space-y-1">
+                  <p className="font-medium">Type d'examen</p>
+                  <p className="text-muted-foreground">{report.examType}</p>
+              </div>
             </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid md:grid-cols-3 gap-4 text-sm">
-            <div className="space-y-1">
-                <p className="font-medium">Patient</p>
-                <p className="text-muted-foreground">{report.patientName}</p>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold">Détails du rapport</h3>
+              <div className="p-4 bg-secondary/50 rounded-md border text-muted-foreground">
+                  <p>{report.report}</p>
+              </div>
             </div>
-            <div className="space-y-1">
-                <p className="font-medium">Date de l'examen</p>
-                <p className="text-muted-foreground">{report.date}</p>
-            </div>
-             <div className="space-y-1">
-                <p className="font-medium">Type d'examen</p>
-                <p className="text-muted-foreground">{report.examType}</p>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Détails du rapport</h3>
-            <div className="p-4 bg-secondary/50 rounded-md border text-muted-foreground">
-                <p>{report.report}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
