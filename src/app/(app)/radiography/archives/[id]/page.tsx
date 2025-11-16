@@ -22,9 +22,34 @@ export default function ReportPage() {
   const report = archiveData.find(item => item.id === reportId);
 
   const handleDownload = () => {
+    if (!report) return;
+
+    const reportContent = `
+Rapport d'Imagerie - ${report.examType}
+ID du rapport: ${report.id}
+
+Patient: ${report.patientName}
+Date de l'examen: ${report.date}
+Type d'examen: ${report.examType}
+
+Détails du rapport:
+${report.report}
+    `;
+
+    const blob = new Blob([reportContent.trim()], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rapport_${report.id}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
     toast({
-        title: "Téléchargement à venir",
-        description: "La fonctionnalité de téléchargement sera bientôt disponible.",
+        title: "Téléchargement terminé",
+        description: "Le rapport a été téléchargé.",
     });
   }
 
