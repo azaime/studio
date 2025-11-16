@@ -45,9 +45,9 @@ export default function PersonnelPage() {
     setIsUserDialogOpen(true);
   }
 
-  const handleUserSaved = (userData: Omit<User, 'id' | 'lastLogin'> & { id?: string }) => {
+  const handleUserSaved = (userData: Omit<User, 'id' | 'lastLogin'> & { id?: string; password?: string }) => {
     if (userData.id) { // Editing existing user
-        setUsers(prev => prev.map(u => u.id === userData.id ? { ...u, ...userData, lastLogin: u.lastLogin } : u));
+        setUsers(prev => prev.map(u => u.id === userData.id ? { ...u, ...userData, lastLogin: u.lastLogin, password: userData.password || u.password } : u));
         toast({
             title: 'Compte mis à jour',
             description: `Le compte pour ${userData.name} a été mis à jour avec succès.`
@@ -56,7 +56,8 @@ export default function PersonnelPage() {
         const userEntry: User = {
             ...userData,
             id: `USR${Date.now()}`,
-            lastLogin: 'À l\'instant'
+            lastLogin: 'À l\'instant',
+            password: userData.password || 'password' // Fallback for new user
         };
         setUsers(prev => [userEntry, ...prev]);
         toast({
@@ -82,10 +83,10 @@ export default function PersonnelPage() {
   }
   
   const handleDialogClose = (open: boolean) => {
+    setIsUserDialogOpen(open);
     if (!open) {
       setEditingUser(null);
     }
-    setIsUserDialogOpen(open);
   }
 
 
