@@ -12,9 +12,11 @@ import type { Appointment } from '@/lib/types';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
+import { useRouter } from 'next/navigation';
 
 export default function OphthalmologyPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [isScheduling, setIsScheduling] = useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
@@ -143,11 +145,11 @@ export default function OphthalmologyPage() {
                     <CardDescription>Raccourcis pour les tâches courantes.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
-                    <Button variant="secondary" onClick={() => handleFeatureComingSoon("Gérer les tests de vision")}>
+                    <Button variant="secondary" onClick={() => router.push('/ophthalmology/vision-tests')}>
                         <Eye className="mr-2 h-4 w-4" />
                         Gérer les tests de vision
                     </Button>
-                    <Button variant="outline" onClick={() => handleFeatureComingSoon("Voir la liste d'attente chirurgicale")}>
+                    <Button variant="outline" onClick={() => router.push('/ophthalmology/surgical-waitlist')}>
                         <List className="mr-2 h-4 w-4" />
                         Voir la liste d'attente chirurgicale
                     </Button>
