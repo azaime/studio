@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { User } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 interface CreateUserDialogProps {
     open: boolean;
@@ -24,6 +25,7 @@ interface CreateUserDialogProps {
 }
 
 export function CreateUserDialog({ open, onOpenChange, onUserSaved, user }: CreateUserDialogProps) {
+    const { toast } = useToast();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [role, setRole] = useState<User['role'] | ''>('');
@@ -32,16 +34,18 @@ export function CreateUserDialog({ open, onOpenChange, onUserSaved, user }: Crea
     const isEditing = !!user;
 
     useEffect(() => {
-        if (isEditing && user) {
-            setName(user.name);
-            setEmail(user.email);
-            setRole(user.role);
-            setPassword(''); // Ne pas pré-remplir le mot de passe pour des raisons de sécurité
-        } else {
-            setName('');
-            setEmail('');
-            setRole('');
-            setPassword('');
+        if (open) {
+            if (isEditing && user) {
+                setName(user.name);
+                setEmail(user.email);
+                setRole(user.role);
+                setPassword(''); // Ne pas pré-remplir le mot de passe pour des raisons de sécurité
+            } else {
+                setName('');
+                setEmail('');
+                setRole('');
+                setPassword('');
+            }
         }
     }, [user, isEditing, open]);
 
@@ -49,6 +53,11 @@ export function CreateUserDialog({ open, onOpenChange, onUserSaved, user }: Crea
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!name || !email || !role || (!isEditing && !password) ) {
+             toast({
+                title: "Formulaire incomplet",
+                description: "Veuillez remplir tous les champs requis.",
+                variant: "destructive",
+            });
             return;
         }
         onUserSaved({ id: user?.id, name, email, role: role as User['role'], password });
