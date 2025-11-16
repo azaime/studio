@@ -18,24 +18,53 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Patient } from '@/lib/types';
+
+type VisionTest = {
+    id: string;
+    patientName: string;
+    date: string;
+    result: string;
+};
 
 interface AddVisionTestDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     patients: Patient[];
-    onTestSaved: (testData: { patientName: string; date: string; result: string; }) => void;
+    onTestSaved: (testData: Omit<VisionTest, 'id'> & { id?: string }) => void;
+    test?: VisionTest | null;
 }
 
-export function AddVisionTestDialog({ open, onOpenChange, patients, onTestSaved }: AddVisionTestDialogProps) {
+export function AddVisionTestDialog({ open, onOpenChange, patients, onTestSaved, test }: AddVisionTestDialogProps) {
     const { toast } = useToast();
     const [patientId, setPatientId] = useState('');
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [resultOD, setResultOD] = useState('');
     const [resultOS, setResultOS] = useState('');
+
+    const isEditing = !!test;
+
+    useEffect(() => {
+        if (open) {
+            if (isEditing && test) {
+                const patient = patients.find(p => p.name === test.patientName);
+                if (patient) setPatientId(patient.id);
+
+                setDate(parseISO(test.date));
+                const results = test.result.split(', ');
+                const od = results.find(r => r.includes('OD'))?.replace(' OD', '') || '';
+                const os = results.find(r => r.includes('OS'))?.replace(' OS', '') || '';
+                setResultOD(od);
+                setResultOS(os);
+            } else {
+                resetForm();
+            }
+        }
+    }, [test, isEditing, open, patients]);
+
 
     const resetForm = () => {
         setPatientId('');
@@ -60,7 +89,8 @@ export function AddVisionTestDialog({ open, onOpenChange, patients, onTestSaved 
 
         const result = `${resultOD} OD, ${resultOS} OS`;
 
-        onTestSaved({ 
+        onTestSaved({
+            id: test?.id,
             patientName: patient.name, 
             date: format(date, 'yyyy-MM-dd'),
             result 
@@ -81,16 +111,16 @@ export function AddVisionTestDialog({ open, onOpenChange, patients, onTestSaved 
             <DialogContent className="sm:max-w-md">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
-                        <DialogTitle>Ajouter un nouveau test de vision</DialogTitle>
+                        <DialogTitle>{isEditing ? "Modifier le test de vision" : "Ajouter un nouveau test de vision"}</DialogTitle>
                         <DialogDescription>
-                            Entrez les résultats du test de vision pour le patient.
+                            {isEditing ? "Mettez à jour les résultats du test." : "Entrez les résultats du test de vision pour le patient."}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="space-y-2">
                             <Label htmlFor="patient">Patient</Label>
                             <Select onValueChange={setPatientId} value={patientId}>
-                                <SelectTrigger>
+                                <SelectTrigger disabled={isEditing}>
                                     <SelectValue placeholder="Sélectionnez un patient" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -137,7 +167,7 @@ export function AddVisionTestDialog({ open, onOpenChange, patients, onTestSaved 
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
-                        <Button type="submit">Enregistrer le test</Button>
+                        <Button type="submit">{isEditing ? "Enregistrer les modifications" : "Enregistrer le test"}</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
