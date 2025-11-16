@@ -52,17 +52,10 @@ export default function RadiographyPage() {
     }
   };
 
-  const handleManageQueue = () => {
+  const handleFeatureComingSoon = (feature: string) => {
     toast({
       title: "Fonctionnalité à venir",
-      description: "La gestion de la file d'attente sera bientôt disponible.",
-    });
-  };
-
-  const handleSearchExams = () => {
-    toast({
-      title: "Fonctionnalité à venir",
-      description: "La recherche dans les archives sera bientôt disponible.",
+      description: `La fonctionnalité '${feature}' sera bientôt disponible.`,
     });
   };
 
@@ -181,11 +174,11 @@ export default function RadiographyPage() {
                         className="hidden"
                         accept="image/*,.pdf"
                     />
-                    <Button variant="secondary" className="w-full justify-start" onClick={handleManageQueue}>
+                    <Button variant="secondary" className="w-full justify-start" onClick={() => handleFeatureComingSoon('Gérer la file d\'attente')}>
                         <ListOrdered className="mr-2 h-4 w-4" />
                         Gérer la file d'attente
                     </Button>
-                    <Button variant="outline" className="w-full justify-start" onClick={handleSearchExams}>
+                    <Button variant="outline" className="w-full justify-start" onClick={() => handleFeatureComingSoon('Rechercher dans les archives')}>
                         <FileSearch className="mr-2 h-4 w-4" />
                         Rechercher dans les archives
                     </Button>
