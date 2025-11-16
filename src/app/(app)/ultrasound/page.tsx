@@ -46,14 +46,8 @@ export default function UltrasoundPage() {
     const { toast } = useToast();
     const [isAddExamDialogOpen, setIsAddExamDialogOpen] = useState(false);
     const [schedule, setSchedule] = useState<UltrasoundExam[]>(initialUltrasoundSchedule);
+    const [editingExam, setEditingExam] = useState<UltrasoundExam | null>(null);
 
-
-    const handleFeatureComingSoon = (feature: string) => {
-        toast({
-            title: "Fonctionnalité à venir",
-            description: `La fonctionnalité '${feature}' sera bientôt disponible.`,
-        });
-    };
 
     const handleViewDetails = (exam: UltrasoundExam) => {
         toast({
@@ -62,18 +56,42 @@ export default function UltrasoundPage() {
         });
     }
     
-    const handleAddExam = (newExamData: Omit<UltrasoundExam, 'id' | 'status'>) => {
-        const newExam: UltrasoundExam = {
-            ...newExamData,
-            id: `ULT${Date.now()}`,
-            status: 'En attente',
-        };
-        setSchedule(prev => [...prev, newExam].sort((a,b) => a.time.localeCompare(b.time)));
+    const handleExamSaved = (examData: Omit<UltrasoundExam, 'id'> & { id?: string }) => {
+        if (examData.id) { // Editing
+            setSchedule(prev => prev.map(e => e.id === examData.id ? examData as UltrasoundExam : e).sort((a,b) => a.time.localeCompare(b.time)));
+             toast({
+                title: "Examen mis à jour",
+                description: `L'examen pour ${examData.patient} a été mis à jour.`,
+            });
+        } else { // Creating
+            const newExam: UltrasoundExam = {
+                ...examData,
+                id: `ULT${Date.now()}`,
+                status: 'En attente',
+            };
+            setSchedule(prev => [...prev, newExam].sort((a,b) => a.time.localeCompare(b.time)));
+             toast({
+                title: "Examen ajouté",
+                description: `L'examen pour ${examData.patient} a été ajouté à l'agenda.`,
+            });
+        }
     };
 
+    const handleOpenEditDialog = (exam: UltrasoundExam) => {
+        setEditingExam(exam);
+        setIsAddExamDialogOpen(true);
+    };
 
-    const handleEdit = (exam: UltrasoundExam) => {
-        handleFeatureComingSoon(`La modification de l'examen pour ${exam.patient}`);
+    const handleOpenCreateDialog = () => {
+        setEditingExam(null);
+        setIsAddExamDialogOpen(true);
+    };
+
+    const handleDialogClose = (open: boolean) => {
+        if(!open) {
+            setEditingExam(null);
+        }
+        setIsAddExamDialogOpen(open);
     }
 
     return (
@@ -84,7 +102,7 @@ export default function UltrasoundPage() {
                         <h1 className="text-2xl font-bold tracking-tight">Service d'Échographie</h1>
                         <p className="text-muted-foreground">Agenda du jour pour les examens d'échographie médicale.</p>
                     </div>
-                    <Button onClick={() => setIsAddExamDialogOpen(true)}>
+                    <Button onClick={handleOpenCreateDialog}>
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Ajouter un examen
                     </Button>
@@ -127,7 +145,7 @@ export default function UltrasoundPage() {
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                     <DropdownMenuItem onClick={() => handleViewDetails(item)}>Voir les détails</DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleEdit(item)}>Modifier</DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleOpenEditDialog(item)}>Modifier</DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>
@@ -140,8 +158,9 @@ export default function UltrasoundPage() {
             </div>
             <AddExamDialog 
                 open={isAddExamDialogOpen}
-                onOpenChange={setIsAddExamDialogOpen}
-                onExamAdded={handleAddExam}
+                onOpenChange={handleDialogClose}
+                onExamSaved={handleExamSaved}
+                exam={editingExam}
             />
         </>
     );

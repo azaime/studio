@@ -20,14 +20,32 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 interface AddExamDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onExamAdded: (exam: Omit<UltrasoundExam, 'id' | 'status'>) => void;
+    onExamSaved: (exam: Omit<UltrasoundExam, 'id'> & { id?: string }) => void;
+    exam?: UltrasoundExam | null;
 }
 
-export function AddExamDialog({ open, onOpenChange, onExamAdded }: AddExamDialogProps) {
+export function AddExamDialog({ open, onOpenChange, onExamSaved, exam }: AddExamDialogProps) {
     const { toast } = useToast();
     const [patient, setPatient] = useState('');
     const [time, setTime] = useState('');
     const [examType, setExamType] = useState('');
+    const [status, setStatus] = useState<UltrasoundExam['status']>('À venir');
+
+    const isEditing = !!exam;
+
+    useEffect(() => {
+        if (exam && open) {
+            setPatient(exam.patient);
+            setTime(exam.time);
+            setExamType(exam.exam);
+            setStatus(exam.status);
+        } else if (!open) {
+            setPatient('');
+            setTime('');
+            setExamType('');
+            setStatus('À venir');
+        }
+    }, [exam, open]);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -40,36 +58,25 @@ export function AddExamDialog({ open, onOpenChange, onExamAdded }: AddExamDialog
             return;
         }
 
-        onExamAdded({
+        onExamSaved({
+            id: exam?.id,
             patient,
             time,
             exam: examType,
-        });
-
-        toast({
-            title: "Examen ajouté",
-            description: `L'examen pour ${patient} a été ajouté à l'agenda.`,
+            status,
         });
 
         onOpenChange(false);
     };
-
-    useEffect(() => {
-        if (!open) {
-            setPatient('');
-            setTime('');
-            setExamType('');
-        }
-    }, [open]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
-                        <DialogTitle>Ajouter un nouvel examen</DialogTitle>
+                        <DialogTitle>{isEditing ? "Modifier l'examen" : "Ajouter un nouvel examen"}</DialogTitle>
                         <DialogDescription>
-                            Remplissez les détails ci-dessous pour ajouter un nouvel examen d'échographie.
+                            {isEditing ? "Modifiez les détails de l'examen ci-dessous." : "Remplissez les détails ci-dessous pour ajouter un nouvel examen d'échographie."}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -118,12 +125,30 @@ export function AddExamDialog({ open, onOpenChange, onExamAdded }: AddExamDialog
                                 </SelectContent>
                             </Select>
                         </div>
+                         {isEditing && (
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="status" className="text-right">
+                                    Statut
+                                </Label>
+                                <Select onValueChange={(value) => setStatus(value as UltrasoundExam['status'])} value={status}>
+                                    <SelectTrigger className="col-span-3">
+                                        <SelectValue placeholder="Sélectionnez un statut" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="En attente">En attente</SelectItem>
+                                        <SelectItem value="En cours">En cours</SelectItem>
+                                        <SelectItem value="Terminé">Terminé</SelectItem>
+                                        <SelectItem value="À venir">À venir</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                             Annuler
                         </Button>
-                        <Button type="submit">Ajouter l'examen</Button>
+                        <Button type="submit">{isEditing ? "Enregistrer les modifications" : "Ajouter l'examen"}</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
