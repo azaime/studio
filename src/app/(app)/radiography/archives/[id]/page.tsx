@@ -21,14 +21,6 @@ export default function ReportPage() {
   const reportId = Array.isArray(params.id) ? params.id[0] : params.id;
   const report = archiveData.find(item => item.id === reportId);
 
-  const handlePrint = () => {
-    toast({
-      title: "Impression...",
-      description: "Le rapport va être imprimé.",
-    });
-    window.print();
-  };
-
   const handleDownload = () => {
     toast({
         title: "Téléchargement à venir",
@@ -62,7 +54,7 @@ export default function ReportPage() {
                 <CardDescription>ID du rapport: {report.id}</CardDescription>
             </div>
              <div className="flex gap-2">
-                <Button variant="outline" size="icon" onClick={handlePrint}>
+                <Button variant="outline" size="icon" onClick={() => window.print()}>
                     <Printer className="h-4 w-4" />
                     <span className="sr-only">Imprimer</span>
                 </Button>
