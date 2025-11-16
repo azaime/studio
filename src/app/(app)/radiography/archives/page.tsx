@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ const archiveData = [
 
 export default function RadiographyArchivesPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = () => {
@@ -26,11 +28,8 @@ export default function RadiographyArchivesPage() {
     });
   };
 
-  const handleViewReport = (patientName: string) => {
-    toast({
-      title: "Fonctionnalité à venir",
-      description: `L'affichage du rapport pour ${patientName} sera bientôt disponible.`,
-    });
+  const handleViewReport = (reportId: string) => {
+    router.push(`/radiography/archives/${reportId}`);
   };
 
   return (
@@ -84,7 +83,7 @@ export default function RadiographyArchivesPage() {
                   <TableCell>{item.examType}</TableCell>
                   <TableCell>{item.date}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm" onClick={() => handleViewReport(item.patientName)}>
+                    <Button variant="outline" size="sm" onClick={() => handleViewReport(item.id)}>
                       <FileText className="mr-2 h-4 w-4" />
                       Voir le rapport
                     </Button>
