@@ -80,6 +80,14 @@ export default function PersonnelPage() {
         variant: "destructive"
     });
   }
+  
+  const handleDialogClose = (open: boolean) => {
+    if (!open) {
+      setEditingUser(null);
+    }
+    setIsUserDialogOpen(open);
+  }
+
 
   return (
     <>
@@ -144,7 +152,7 @@ export default function PersonnelPage() {
     </div>
     <CreateUserDialog 
         open={isUserDialogOpen}
-        onOpenChange={setIsUserDialogOpen}
+        onOpenChange={handleDialogClose}
         onUserSaved={handleUserSaved}
         user={editingUser}
       />
