@@ -33,17 +33,23 @@ export function AddExamDialog({ open, onOpenChange, onExamSaved, exam }: AddExam
 
     const isEditing = !!exam;
 
+    const resetForm = () => {
+        setPatient('');
+        setTime('');
+        setExamType('');
+        setStatus('À venir');
+    };
+
     useEffect(() => {
-        if (exam && open) {
-            setPatient(exam.patient);
-            setTime(exam.time);
-            setExamType(exam.exam);
-            setStatus(exam.status);
-        } else if (!open) {
-            setPatient('');
-            setTime('');
-            setExamType('');
-            setStatus('À venir');
+        if (open) {
+            if (exam) {
+                setPatient(exam.patient);
+                setTime(exam.time);
+                setExamType(exam.exam);
+                setStatus(exam.status);
+            } else {
+                resetForm();
+            }
         }
     }, [exam, open]);
 
@@ -69,8 +75,15 @@ export function AddExamDialog({ open, onOpenChange, onExamSaved, exam }: AddExam
         onOpenChange(false);
     };
 
+    const handleOpenChange = (isOpen: boolean) => {
+        onOpenChange(isOpen);
+        if (!isOpen) {
+            resetForm();
+        }
+    }
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
