@@ -1,13 +1,16 @@
 
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, BarChart, Settings, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { AddTaskDialog } from "@/components/administration/add-task-dialog";
 
 export default function AdministrationPage() {
   const { toast } = useToast();
+  const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);
 
   const handleFeatureComingSoon = (feature: string) => {
     toast({
@@ -17,13 +20,14 @@ export default function AdministrationPage() {
   }
 
   return (
+    <>
     <div className="space-y-6">
         <div className="flex justify-between items-center">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">Administration</h1>
                 <p className="text-muted-foreground">Outils et rapports pour l'administration de l'hôpital.</p>
             </div>
-            <Button onClick={() => handleFeatureComingSoon('Ajouter une tâche')}>
+            <Button onClick={() => setIsAddTaskDialogOpen(true)}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Ajouter une tâche
             </Button>
@@ -67,5 +71,7 @@ export default function AdministrationPage() {
             </Card>
         </div>
     </div>
+    <AddTaskDialog open={isAddTaskDialogOpen} onOpenChange={setIsAddTaskDialogOpen} />
+    </>
   );
 }
