@@ -1,11 +1,14 @@
 
 "use client";
 
+import { useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Download, Printer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // Données factices pour la démo
 const archiveData = [
@@ -18,38 +21,44 @@ export default function ReportPage() {
   const router = useRouter();
   const params = useParams();
   const { toast } = useToast();
+  const reportRef = useRef<HTMLDivElement>(null);
   const reportId = Array.isArray(params.id) ? params.id[0] : params.id;
   const report = archiveData.find(item => item.id === reportId);
 
   const handleDownload = () => {
-    if (!report) return;
-
-    const reportContent = `
-Rapport d'Imagerie - ${report.examType}
-ID du rapport: ${report.id}
-
-Patient: ${report.patientName}
-Date de l'examen: ${report.date}
-Type d'examen: ${report.examType}
-
-Détails du rapport:
-${report.report}
-    `;
-
-    const blob = new Blob([reportContent.trim()], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `rapport_${report.id}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    if (!reportRef.current) return;
 
     toast({
-        title: "Téléchargement terminé",
-        description: "Le rapport a été téléchargé.",
+        title: "Génération du PDF...",
+        description: "Le rapport va bientôt être téléchargé.",
+    });
+
+    html2canvas(reportRef.current, { scale: 2 }).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const ratio = canvasWidth / canvasHeight;
+        const width = pdfWidth - 20; // with margin
+        const height = width / ratio;
+
+        let position = 10;
+        
+        if (height > pdfHeight - 20) {
+             pdf.addImage(imgData, 'PNG', 10, position, width, height, undefined, 'FAST');
+        } else {
+             position = (pdfHeight - height) / 2;
+             pdf.addImage(imgData, 'PNG', 10, position, width, height, undefined, 'FAST');
+        }
+        
+        pdf.save(`rapport_${report?.id}.pdf`);
+
+         toast({
+            title: "Téléchargement terminé",
+            description: "Le rapport PDF a été téléchargé.",
+        });
     });
   }
 
@@ -67,18 +76,12 @@ ${report.report}
 
   return (
     <div className="space-y-6">
-        <Button onClick={() => router.back()} variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour aux archives
-        </Button>
-
-      <Card>
-        <CardHeader className="flex flex-row justify-between items-start">
-            <div>
-                <CardTitle>Rapport d'imagerie - {report.examType}</CardTitle>
-                <CardDescription>ID du rapport: {report.id}</CardDescription>
-            </div>
-             <div className="flex gap-2">
+        <div className="flex justify-between items-center">
+            <Button onClick={() => router.back()} variant="outline">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Retour aux archives
+            </Button>
+            <div className="flex gap-2">
                 <Button variant="outline" size="icon" onClick={() => window.print()}>
                     <Printer className="h-4 w-4" />
                     <span className="sr-only">Imprimer</span>
@@ -87,6 +90,14 @@ ${report.report}
                     <Download className="h-4 w-4" />
                     <span className="sr-only">Télécharger</span>
                 </Button>
+            </div>
+        </div>
+
+      <Card ref={reportRef}>
+        <CardHeader>
+            <div>
+                <CardTitle>Rapport d'imagerie - {report.examType}</CardTitle>
+                <CardDescription>ID du rapport: {report.id}</CardDescription>
             </div>
         </CardHeader>
         <CardContent className="space-y-6">
