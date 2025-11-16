@@ -13,11 +13,15 @@ import type { Appointment, Patient } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
+type SurgeryStatus = 'Planifiée' | 'Terminée';
+
 const plannedSurgeriesData = [
-    { id: "SURG-001", patientName: "Mamadou Diallo", patientId: "PAT002", surgery: "Appendicectomie", date: "2024-08-15", time: "08:00", doctorName: "Dr. Fall", status: "Planifiée" as 'Planifiée' | 'Terminée' },
-    { id: "SURG-002", patientName: "Awa Gueye", patientId: "PAT005", surgery: "Chirurgie de la cataracte", date: "2024-08-16", time: "10:00", doctorName: "Dr. Diop", status: "Planifiée" as 'Planifiée' | 'Terminée' },
-    { id: "SURG-003", patientName: "Ibrahima Camara", patientId: "PAT004", surgery: "Hernie inguinale", date: "2024-08-14", time: "13:00", doctorName: "Dr. Fall", status: "Terminée" as 'Planifiée' | 'Terminée' },
+    { id: "SURG-001", patientName: "Mamadou Diallo", patientId: "PAT002", surgery: "Appendicectomie", date: "2024-08-15", time: "08:00", doctorName: "Dr. Fall", status: "Planifiée" as SurgeryStatus },
+    { id: "SURG-002", patientName: "Awa Gueye", patientId: "PAT005", surgery: "Chirurgie de la cataracte", date: "2024-08-16", time: "10:00", doctorName: "Dr. Diop", status: "Planifiée" as SurgeryStatus },
+    { id: "SURG-003", patientName: "Ibrahima Camara", patientId: "PAT004", surgery: "Hernie inguinale", date: "2024-08-14", time: "13:00", doctorName: "Dr. Fall", status: "Terminée" as SurgeryStatus },
 ]
+
+type PlannedSurgery = typeof plannedSurgeriesData[0];
 
 export default function SurgeryPage() {
   const [isScheduling, setIsScheduling] = useState(false);
@@ -26,7 +30,7 @@ export default function SurgeryPage() {
   const { toast } = useToast();
 
   const handleSurgeryScheduled = (newSurgery: Omit<Appointment, 'id' | 'status'>) => {
-    const surgeryEntry = {
+    const surgeryEntry: PlannedSurgery = {
         id: `SURG-${Date.now()}`,
         patientName: newSurgery.patientName,
         patientId: newSurgery.patientId,
@@ -34,7 +38,7 @@ export default function SurgeryPage() {
         date: newSurgery.date,
         time: newSurgery.time,
         doctorName: newSurgery.doctorName,
-        status: 'Planifiée' as 'Planifiée' | 'Terminée'
+        status: 'Planifiée'
     };
     setPlannedSurgeries(prev => [surgeryEntry, ...prev]);
     toast({
@@ -51,7 +55,7 @@ export default function SurgeryPage() {
       });
   }
   
-  const handleViewDetails = (surgery: typeof plannedSurgeriesData[0]) => {
+  const handleViewDetails = (surgery: PlannedSurgery) => {
       toast({
           title: `Détails pour ${surgery.patientName}`,
           description: `${surgery.surgery} par ${surgery.doctorName} le ${surgery.date} à ${surgery.time}.`
