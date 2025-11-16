@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Download, Printer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -14,10 +14,12 @@ const archiveData = [
   { id: 'ARC003', patientName: 'Awa Ndiaye', examType: 'Mammographie', date: '2024-07-10', report: 'Tissu mammaire dense, pas de masses suspectes.' },
 ];
 
-export default function ReportPage({ params }: { params: { id: string } }) {
+export default function ReportPage() {
   const router = useRouter();
+  const params = useParams();
   const { toast } = useToast();
-  const report = archiveData.find(item => item.id === params.id);
+  const reportId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const report = archiveData.find(item => item.id === reportId);
 
   const handlePrint = () => {
     toast({
