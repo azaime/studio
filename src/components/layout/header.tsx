@@ -42,6 +42,8 @@ const pageTitles: { [key: string]: string } = {
   analytics: 'Tableau de bord analytique',
   settings: 'Paramètres',
   profile: 'Profil',
+  queue: 'File d\'attente',
+  archives: 'Archives',
 };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);

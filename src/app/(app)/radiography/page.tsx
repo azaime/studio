@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload, ListOrdered, FileSearch, PlusCircle, MoreHorizontal } from "lucide-react";
@@ -34,6 +35,7 @@ const getStatusBadgeVariant = (status: string) => {
 
 export default function RadiographyPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [isRequestingExam, setIsRequestingExam] = useState(false);
   const [radiographyRequests, setRadiographyRequests] = useState<RadiographyRequest[]>(initialRadiographyRequests);
   const [editingRequest, setEditingRequest] = useState<RadiographyRequest | null>(null);
@@ -51,13 +53,6 @@ export default function RadiographyPage() {
         description: `Le fichier "${file.name}" a été sélectionné.`,
       });
     }
-  };
-
-  const handleFeatureComingSoon = (feature: string) => {
-    toast({
-      title: "Fonctionnalité à venir",
-      description: `La fonctionnalité '${feature}' sera bientôt disponible.`,
-    });
   };
 
   const handleExamRequested = (data: Omit<RadiographyRequest, 'id' | 'requestDate' | 'status'> & { id?: string }) => {
@@ -200,11 +195,11 @@ export default function RadiographyPage() {
                         className="hidden"
                         accept="image/*,.pdf"
                     />
-                    <Button variant="secondary" className="w-full justify-start" onClick={() => handleFeatureComingSoon('Gérer la file d\'attente')}>
+                    <Button variant="secondary" className="w-full justify-start" onClick={() => router.push('/radiography/queue')}>
                         <ListOrdered className="mr-2 h-4 w-4" />
                         Gérer la file d'attente
                     </Button>
-                    <Button variant="outline" className="w-full justify-start" onClick={() => handleFeatureComingSoon('Rechercher dans les archives')}>
+                    <Button variant="outline" className="w-full justify-start" onClick={() => router.push('/radiography/archives')}>
                         <FileSearch className="mr-2 h-4 w-4" />
                         Rechercher dans les archives
                     </Button>
