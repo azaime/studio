@@ -60,3 +60,11 @@ export type RadiographyRequest = {
   requestDate: string;
   status: 'En attente' | 'Terminé' | 'En cours' | 'Annulé';
 };
+
+export type UltrasoundExam = {
+    id: string;
+    time: string;
+    patient: string;
+    exam: string;
+    status: 'Terminé' | 'En cours' | 'En attente' | 'À venir';
+};

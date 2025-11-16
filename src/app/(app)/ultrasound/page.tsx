@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from "react";
 import {
     Card,
     CardContent,
@@ -21,15 +22,15 @@ import { PlusCircle, MoreHorizontal } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AddExamDialog } from "@/components/ultrasound/add-exam-dialog";
+import type { UltrasoundExam } from "@/lib/types";
 
-const ultrasoundSchedule = [
+const initialUltrasoundSchedule: UltrasoundExam[] = [
     { id: "ULT001", time: "09:00", patient: "Fatou Kiné", exam: "Échographie abdominale", status: "Terminé" },
     { id: "ULT002", time: "09:45", patient: "Moussa Fall", exam: "Échographie pelvienne", status: "En cours" },
     { id: "ULT003", time: "10:30", patient: "Astou Ndiaye", exam: "Échographie obstétricale T1", status: "En attente" },
     { id: "ULT004", time: "11:15", patient: "Patient suivant...", exam: "En attente", status: "À venir" },
 ];
-
-type UltrasoundExam = typeof ultrasoundSchedule[0];
 
 const getStatusBadgeVariant = (status: string) => {
     switch (status) {
@@ -43,6 +44,9 @@ const getStatusBadgeVariant = (status: string) => {
 
 export default function UltrasoundPage() {
     const { toast } = useToast();
+    const [isAddExamDialogOpen, setIsAddExamDialogOpen] = useState(false);
+    const [schedule, setSchedule] = useState<UltrasoundExam[]>(initialUltrasoundSchedule);
+
 
     const handleFeatureComingSoon = (feature: string) => {
         toast({
@@ -57,71 +61,88 @@ export default function UltrasoundPage() {
             description: `Heure: ${exam.time}, Examen: ${exam.exam}, Statut: ${exam.status}`
         });
     }
+    
+    const handleAddExam = (newExamData: Omit<UltrasoundExam, 'id' | 'status'>) => {
+        const newExam: UltrasoundExam = {
+            ...newExamData,
+            id: `ULT${Date.now()}`,
+            status: 'En attente',
+        };
+        setSchedule(prev => [...prev, newExam].sort((a,b) => a.time.localeCompare(b.time)));
+    };
+
 
     const handleEdit = (exam: UltrasoundExam) => {
         handleFeatureComingSoon(`La modification de l'examen pour ${exam.patient}`);
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Service d'Échographie</h1>
-                    <p className="text-muted-foreground">Agenda du jour pour les examens d'échographie médicale.</p>
+        <>
+            <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">Service d'Échographie</h1>
+                        <p className="text-muted-foreground">Agenda du jour pour les examens d'échographie médicale.</p>
+                    </div>
+                    <Button onClick={() => setIsAddExamDialogOpen(true)}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Ajouter un examen
+                    </Button>
                 </div>
-                <Button onClick={() => handleFeatureComingSoon('Ajouter un examen')}>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Ajouter un examen
-                </Button>
-            </div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Agenda du jour</CardTitle>
-                    <CardDescription>
-                        Liste des examens d'échographie pour aujourd'hui.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Heure</TableHead>
-                                <TableHead>Patient</TableHead>
-                                <TableHead>Examen</TableHead>
-                                <TableHead>Statut</TableHead>
-                                <TableHead><span className="sr-only">Actions</span></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {ultrasoundSchedule.map((item) => (
-                                <TableRow key={item.id}>
-                                    <TableCell className="font-medium">{item.time}</TableCell>
-                                    <TableCell>{item.patient}</TableCell>
-                                    <TableCell>{item.exam}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={getStatusBadgeVariant(item.status)}>{item.status}</Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                    <span className="sr-only">Menu</span>
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem onClick={() => handleViewDetails(item)}>Voir les détails</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleEdit(item)}>Modifier</DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Agenda du jour</CardTitle>
+                        <CardDescription>
+                            Liste des examens d'échographie pour aujourd'hui.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Heure</TableHead>
+                                    <TableHead>Patient</TableHead>
+                                    <TableHead>Examen</TableHead>
+                                    <TableHead>Statut</TableHead>
+                                    <TableHead><span className="sr-only">Actions</span></TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-        </div>
+                            </TableHeader>
+                            <TableBody>
+                                {schedule.map((item) => (
+                                    <TableRow key={item.id}>
+                                        <TableCell className="font-medium">{item.time}</TableCell>
+                                        <TableCell>{item.patient}</TableCell>
+                                        <TableCell>{item.exam}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={getStatusBadgeVariant(item.status)}>{item.status}</Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                        <span className="sr-only">Menu</span>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuItem onClick={() => handleViewDetails(item)}>Voir les détails</DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleEdit(item)}>Modifier</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </div>
+            <AddExamDialog 
+                open={isAddExamDialogOpen}
+                onOpenChange={setIsAddExamDialogOpen}
+                onExamAdded={handleAddExam}
+            />
+        </>
     );
 }
