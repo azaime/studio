@@ -16,10 +16,25 @@ export default function AdministrationPage() {
 
   const handleDownloadReport = () => {
     toast({
-      title: "Téléchargement en cours",
+      title: "Génération du rapport...",
       description: "Le rapport de Juillet va bientôt être téléchargé.",
     });
-    // In a real application, you would trigger the file download here.
+
+    // Contenu factice pour le rapport
+    const reportContent = `Rapport Mensuel - Juillet 2024\n\nSection 1: Résumé de l'activité\n- Patients admis: 150\n- Consultations: 450\n- Interventions chirurgicales: 45\n\nSection 2: Performance Financière\n- Revenus: 12,500,000 XOF\n- Dépenses: 8,750,000 XOF\n\nFin du rapport.`;
+
+    // Créer un blob et un lien de téléchargement
+    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'rapport_juillet.txt';
+    document.body.appendChild(a);
+    a.click();
+    
+    // Nettoyage
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
