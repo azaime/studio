@@ -12,6 +12,7 @@ import { ScheduleAppointmentDialog } from "@/components/appointments/schedule-ap
 import { patients, doctors } from "@/lib/data";
 import type { Appointment } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
 
 export default function ENTPage() {
   const { toast } = useToast();
@@ -203,4 +204,3 @@ export default function ENTPage() {
     </>
   );
 }
-
