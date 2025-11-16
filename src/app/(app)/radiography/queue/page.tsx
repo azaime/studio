@@ -1,17 +1,60 @@
 
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
-const queueData = [
+type QueueItem = {
+    id: string;
+    patientName: string;
+    examType: string;
+    arrivalTime: string;
+    status: 'En attente' | 'En cours' | 'Terminé';
+};
+
+const initialQueueData: QueueItem[] = [
   { id: 'Q1', patientName: 'Moussa Diop', examType: 'Scanner (CT)', arrivalTime: '10:15', status: 'En attente' },
   { id: 'Q2', patientName: 'Aminata Sow', examType: 'Radiographie pulmonaire', arrivalTime: '10:30', status: 'En attente' },
   { id: 'Q3', patientName: 'Daouda Ndiaye', examType: 'IRM', arrivalTime: '10:45', status: 'En attente' },
 ];
 
+const getStatusBadgeVariant = (status: QueueItem['status']) => {
+    switch (status) {
+        case 'Terminé': return 'secondary';
+        case 'En cours': return 'default';
+        case 'En attente': return 'outline';
+        default: return 'outline';
+    }
+};
+
 export default function RadiographyQueuePage() {
+  const [queue, setQueue] = useState<QueueItem[]>(initialQueueData);
+  const { toast } = useToast();
+
+  const handleViewDetails = (item: QueueItem) => {
+    toast({
+      title: `Détails pour ${item.patientName}`,
+      description: `Examen: ${item.examType}, Arrivée: ${item.arrivalTime}, Statut: ${item.status}`,
+    });
+  };
+
+  const handleUpdateStatus = (itemId: string, newStatus: QueueItem['status']) => {
+    setQueue(prevQueue => prevQueue.map(item =>
+        item.id === itemId ? { ...item, status: newStatus } : item
+    ));
+    toast({
+        title: "Statut mis à jour",
+        description: `Le statut de l'examen a été mis à jour à "${newStatus}".`,
+    });
+  };
+
+
   return (
     <div className="space-y-6">
       <div>
@@ -35,16 +78,33 @@ export default function RadiographyQueuePage() {
                 <TableHead>Type d'examen</TableHead>
                 <TableHead>Heure d'arrivée</TableHead>
                 <TableHead>Statut</TableHead>
+                <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {queueData.map((item) => (
+              {queue.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.patientName}</TableCell>
                   <TableCell>{item.examType}</TableCell>
                   <TableCell>{item.arrivalTime}</TableCell>
                   <TableCell>
-                    <Badge variant="default">{item.status}</Badge>
+                    <Badge variant={getStatusBadgeVariant(item.status)}>{item.status}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Menu</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => handleViewDetails(item)}>Voir les détails</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleUpdateStatus(item.id, 'En cours')}>Passer à 'En cours'</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleUpdateStatus(item.id, 'Terminé')}>Marquer comme 'Terminé'</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
