@@ -6,8 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, DropdownMenuPortal } from "@/components/ui/dropdown-menu";
 
 type Toy = {
     id: string;
@@ -45,6 +46,23 @@ export default function PlayroomPage() {
         });
     };
 
+    const handleViewDetails = (toy: Toy) => {
+        toast({
+            title: `Détails pour ${toy.name}`,
+            description: `Statut: ${toy.status} | Dernier nettoyage: ${toy.lastCleaned}`,
+        });
+    };
+
+    const handleUpdateStatus = (toyId: string, newStatus: Toy['status']) => {
+        setToys(prevToys => prevToys.map(toy => 
+            toy.id === toyId ? { ...toy, status: newStatus } : toy
+        ));
+        toast({
+            title: "Statut mis à jour",
+            description: `Le statut du jouet a été mis à jour à "${newStatus}".`,
+        });
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -69,6 +87,7 @@ export default function PlayroomPage() {
                                 <TableHead>Jouet</TableHead>
                                 <TableHead>Statut</TableHead>
                                 <TableHead>Dernier nettoyage</TableHead>
+                                <TableHead><span className="sr-only">Actions</span></TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -79,6 +98,31 @@ export default function PlayroomPage() {
                                         <Badge variant={getStatusBadgeVariant(toy.status)}>{toy.status}</Badge>
                                     </TableCell>
                                     <TableCell>{toy.lastCleaned}</TableCell>
+                                    <TableCell>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                    <span className="sr-only">Menu</span>
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem onClick={() => handleViewDetails(toy)}>Voir les détails</DropdownMenuItem>
+                                                <DropdownMenuSub>
+                                                    <DropdownMenuSubTrigger>Modifier le statut</DropdownMenuSubTrigger>
+                                                    <DropdownMenuPortal>
+                                                        <DropdownMenuSubContent>
+                                                            <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'Propre')}>Propre</DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'En usage')}>En usage</DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'À nettoyer')}>À nettoyer</DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleUpdateStatus(toy.id, 'Cassé')}>Cassé</DropdownMenuItem>
+                                                        </DropdownMenuSubContent>
+                                                    </DropdownMenuPortal>
+                                                </DropdownMenuSub>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
