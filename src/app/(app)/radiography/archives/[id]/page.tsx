@@ -27,6 +27,13 @@ export default function ReportPage({ params }: { params: { id: string } }) {
     window.print();
   };
 
+  const handleDownload = () => {
+    toast({
+        title: "Téléchargement à venir",
+        description: "La fonctionnalité de téléchargement sera bientôt disponible.",
+    });
+  }
+
   if (!report) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center">
@@ -57,7 +64,7 @@ export default function ReportPage({ params }: { params: { id: string } }) {
                     <Printer className="h-4 w-4" />
                     <span className="sr-only">Imprimer</span>
                 </Button>
-                <Button variant="outline" size="icon" onClick={() => toast({ title: 'Fonctionnalité à venir' })}>
+                <Button variant="outline" size="icon" onClick={handleDownload}>
                     <Download className="h-4 w-4" />
                     <span className="sr-only">Télécharger</span>
                 </Button>
@@ -89,4 +96,3 @@ export default function ReportPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
-
