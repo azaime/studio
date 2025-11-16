@@ -200,11 +200,11 @@ export default function RadiographyPage() {
                         className="hidden"
                         accept="image/*,.pdf"
                     />
-                    <Button variant="secondary" className="w-full justify-start" onClick={() => handleFeatureComingSoon('Gérer la file d\'attente')}>
+                    <Button variant="secondary" className="w-full justify-start" onClick={() => handleFeatureComingSoon("Gérer la file d'attente")}>
                         <ListOrdered className="mr-2 h-4 w-4" />
                         Gérer la file d'attente
                     </Button>
-                    <Button variant="outline" className="w-full justify-start" onClick={() => handleFeatureComingSoon('Rechercher dans les archives')}>
+                    <Button variant="outline" className="w-full justify-start" onClick={() => handleFeatureComingSoon("Rechercher dans les archives")}>
                         <FileSearch className="mr-2 h-4 w-4" />
                         Rechercher dans les archives
                     </Button>
