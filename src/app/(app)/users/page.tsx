@@ -52,14 +52,14 @@ import {
 
     const handleUserSaved = (userData: Omit<User, 'id' | 'lastLogin'> & { id?: string }) => {
         if (userData.id) { // Editing existing user
-            setUsers(prev => prev.map(u => u.id === userData.id ? { ...u, ...userData } : u));
+            setUsers(prev => prev.map(u => u.id === userData.id ? { ...u, ...userData } as User : u));
             toast({
                 title: 'Compte mis à jour',
                 description: `Le compte pour ${userData.name} a été mis à jour avec succès.`
             });
         } else { // Creating new user
             const userEntry: User = {
-                ...userData,
+                ...(userData as Omit<User, 'id' | 'lastLogin'>),
                 id: `USR${Date.now()}`,
                 lastLogin: 'À l\'instant'
             };
@@ -69,6 +69,13 @@ import {
                 description: `Le compte pour ${userData.name} a été créé avec succès.`
             });
         }
+    }
+
+    const handleViewDetails = (user: User) => {
+      toast({
+          title: `Détails pour ${user.name}`,
+          description: `Email: ${user.email}, Rôle: ${user.role}`
+      });
     }
 
     return (
@@ -120,6 +127,7 @@ import {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => handleViewDetails(user)}>Voir les détails</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleOpenEditDialog(user)}>Modifier les autorisations</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => toast({ title: "Fonctionnalité non implémentée" })}>Réinitialiser le mot de passe</DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive" onClick={() => toast({ title: "Fonctionnalité non implémentée", variant: "destructive" })}>Désactiver le compte</DropdownMenuItem>
