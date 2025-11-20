@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
   const { toast } = useToast();
-  const [hospitalName, setHospitalName] = useState("Mongo Health Hub");
+  const [hospitalName, setHospitalName] = useState("HOPITALE PROVINCIALE DE MONGO");
   const [adminEmail, setAdminEmail] = useState("admin@mongo.health");
 
   const handleSaveSettings = () => {

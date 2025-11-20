@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Mongo Health Hub',
+  title: 'HOPITALE PROVINCIALE DE MONGO',
   description: 'Gestion d’un hôpital central de Mongo',
 };
 

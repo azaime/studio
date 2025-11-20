@@ -12,7 +12,7 @@ export function Logo({ className }: { className?: string }) {
             <Stethoscope className="w-6 h-6" />
         </div>
       <span className="font-semibold text-lg">
-        Mongo Health Hub
+        HOPITALE PROVINCIALE DE MONGO
       </span>
     </div>
   );
