@@ -15,12 +15,13 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm mx-auto">
-        <CardHeader className="space-y-4">
+        <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
-            <Logo />
+             <Logo />
           </div>
-          <CardTitle className="text-2xl text-center">Bienvenue</CardTitle>
-          <CardDescription className="text-center">
+          <h1 className="text-2xl font-bold">HOPITALE PROVINCIALE DE MONGO</h1>
+          <CardTitle className="text-xl">Bienvenue</CardTitle>
+          <CardDescription>
             Entrez vos identifiants pour accéder à votre compte
           </CardDescription>
         </CardHeader>

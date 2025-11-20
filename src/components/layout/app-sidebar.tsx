@@ -70,7 +70,10 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Logo />
+        <div className="flex items-center gap-2">
+            <Logo />
+            <span className="font-semibold text-lg whitespace-nowrap">HOPITALE PROVINCIALE DE MONGO</span>
+        </div>
       </SidebarHeader>
       <SidebarContent className="p-2">
         <SidebarMenu>
