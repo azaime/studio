@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -22,6 +23,7 @@ import { MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuPortal, DropdownMenuSubContent } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useToast } from '@/hooks/use-toast';
+import { EditLabRequestDialog } from '@/components/lab/edit-lab-request-dialog';
 
 const getStatusBadgeVariant = (status: string) => {
   switch (status) {
@@ -34,6 +36,8 @@ const getStatusBadgeVariant = (status: string) => {
 
 export default function LabPage() {
   const [labRequests, setLabRequests] = useState<LabRequest[]>(initialLabRequests);
+  const [editingRequest, setEditingRequest] = useState<LabRequest | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const handleViewResults = (request: LabRequest) => {
@@ -53,7 +57,20 @@ export default function LabPage() {
     });
   }
 
+  const handleOpenEditDialog = (request: LabRequest) => {
+    setEditingRequest(request);
+    setIsEditDialogOpen(true);
+  };
+  
+  const handleDialogClose = (open: boolean) => {
+    if(!open) {
+        setEditingRequest(null);
+    }
+    setIsEditDialogOpen(open);
+  }
+
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle>Demandes de laboratoire</CardTitle>
@@ -96,6 +113,7 @@ export default function LabPage() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => handleViewResults(request)}>Voir les résultats</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleOpenEditDialog(request)}>Modifier</DropdownMenuItem>
                        <DropdownMenuSub>
                           <DropdownMenuSubTrigger>Mettre à jour le statut</DropdownMenuSubTrigger>
                           <DropdownMenuPortal>
@@ -115,5 +133,12 @@ export default function LabPage() {
         </Table>
       </CardContent>
     </Card>
+    <EditLabRequestDialog 
+      open={isEditDialogOpen}
+      onOpenChange={handleDialogClose}
+      request={editingRequest}
+      onStatusChange={handleUpdateStatus}
+    />
+    </>
   )
 }
