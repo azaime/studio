@@ -2,19 +2,19 @@ import type { Patient, Appointment, Medication, User, LabRequest, EmergencyTriag
 import { subDays, format } from 'date-fns';
 
 export const patients: Patient[] = [
-  { id: 'PAT001', name: 'Aminata Sow', age: 34, gender: 'Femme', lastVisit: format(subDays(new Date(), 10), 'yyyy-MM-dd'), email: 'aminata.sow@example.com', phone: '+221771234567', address: '123 Rue de Dakar, Dakar' },
-  { id: 'PAT002', name: 'Moussa Diop', age: 45, gender: 'Homme', lastVisit: format(subDays(new Date(), 25), 'yyyy-MM-dd'), email: 'moussa.diop@example.com', phone: '+221772345678', address: '456 Avenue de Thies, Thies' },
-  { id: 'PAT003', name: 'Fatima Gueye', age: 28, gender: 'Femme', lastVisit: format(subDays(new Date(), 5), 'yyyy-MM-dd'), email: 'fatima.gueye@example.com', phone: '+221773456789', address: '789 Boulevard de Saint-Louis, Saint-Louis' },
-  { id: 'PAT004', name: 'Ibrahim Fall', age: 62, gender: 'Homme', lastVisit: format(subDays(new Date(), 60), 'yyyy-MM-dd'), email: 'ibrahim.fall@example.com', phone: '+221774567890', address: '101 Route de Kaolack, Kaolack' },
-  { id: 'PAT005', name: 'Awa Ndiaye', age: 19, gender: 'Femme', lastVisit: format(subDays(new Date(), 15), 'yyyy-MM-dd'), email: 'awa.ndiaye@example.com', phone: '+221775678901', address: '212 Rue de Ziguinchor, Ziguinchor' },
+  { id: 'PAT001', name: 'Aminata Sow', age: 34, gender: 'Femme', lastVisit: '2024-07-19', email: 'aminata.sow@example.com', phone: '+221771234567', address: '123 Rue de Dakar, Dakar' },
+  { id: 'PAT002', name: 'Moussa Diop', age: 45, gender: 'Homme', lastVisit: '2024-07-04', email: 'moussa.diop@example.com', phone: '+221772345678', address: '456 Avenue de Thies, Thies' },
+  { id: 'PAT003', name: 'Fatima Gueye', age: 28, gender: 'Femme', lastVisit: '2024-07-24', email: 'fatima.gueye@example.com', phone: '+221773456789', address: '789 Boulevard de Saint-Louis, Saint-Louis' },
+  { id: 'PAT004', name: 'Ibrahim Fall', age: 62, gender: 'Homme', lastVisit: '2024-05-30', email: 'ibrahim.fall@example.com', phone: '+221774567890', address: '101 Route de Kaolack, Kaolack' },
+  { id: 'PAT005', name: 'Awa Ndiaye', age: 19, gender: 'Femme', lastVisit: '2024-07-14', email: 'awa.ndiaye@example.com', phone: '+221775678901', address: '212 Rue de Ziguinchor, Ziguinchor' },
 ];
 
 export const appointments: Appointment[] = [
-  { id: 'APP001', patientName: 'Aminata Sow', patientId: 'PAT001', doctorName: 'Dr. Cisse', service: 'Cardiologie', date: format(new Date(), 'yyyy-MM-dd'), time: '10:00', status: 'Programmé' },
-  { id: 'APP002', patientName: 'Moussa Diop', patientId: 'PAT002', doctorName: 'Dr. Ba', service: 'Médecine Générale', date: format(new Date(), 'yyyy-MM-dd'), time: '11:30', status: 'Programmé' },
-  { id: 'APP003', patientName: 'Fatima Gueye', patientId: 'PAT003', doctorName: 'Dr. Diallo', service: 'Maternité', date: format(subDays(new Date(), -1), 'yyyy-MM-dd'), time: '09:00', status: 'Programmé' },
-  { id: 'APP004', patientName: 'Ibrahim Fall', patientId: 'PAT004', doctorName: 'Dr. Cisse', service: 'Cardiologie', date: format(subDays(new Date(), 1), 'yyyy-MM-dd'), time: '14:00', status: 'Terminé' },
-  { id: 'APP005', patientName: 'Awa Ndiaye', patientId: 'PAT005', doctorName: 'Dr. Toure', service: 'Pédiatrie', date: format(subDays(new Date(), 2), 'yyyy-MM-dd'), time: '16:00', status: 'Annulé' },
+  { id: 'APP001', patientName: 'Aminata Sow', patientId: 'PAT001', doctorName: 'Dr. Cisse', service: 'Cardiologie', date: '2024-07-29', time: '10:00', status: 'Programmé' },
+  { id: 'APP002', patientName: 'Moussa Diop', patientId: 'PAT002', doctorName: 'Dr. Ba', service: 'Médecine Générale', date: '2024-07-29', time: '11:30', status: 'Programmé' },
+  { id: 'APP003', patientName: 'Fatima Gueye', patientId: 'PAT003', doctorName: 'Dr. Diallo', service: 'Maternité', date: '2024-07-30', time: '09:00', status: 'Programmé' },
+  { id: 'APP004', patientName: 'Ibrahim Fall', patientId: 'PAT004', doctorName: 'Dr. Cisse', service: 'Cardiologie', date: '2024-07-28', time: '14:00', status: 'Terminé' },
+  { id: 'APP005', patientName: 'Awa Ndiaye', patientId: 'PAT005', doctorName: 'Dr. Toure', service: 'Pédiatrie', date: '2024-07-27', time: '16:00', status: 'Annulé' },
 ];
 
 export const medications: Medication[] = [
@@ -26,10 +26,10 @@ export const medications: Medication[] = [
 ];
 
 export const users: User[] = [
-  { id: 'USR001', name: 'Admin User', email: 'admin@mongo.health', role: 'Admin', lastLogin: format(subDays(new Date(), 0), 'yyyy-MM-dd HH:mm') },
-  { id: 'USR002', name: 'Dr. Khadija Cisse', email: 'k.cisse@mongo.health', role: 'Docteur', lastLogin: format(subDays(new Date(), 1), 'yyyy-MM-dd HH:mm') },
-  { id: 'USR003', name: 'Mamadou Ba', email: 'm.ba@mongo.health', role: 'Infirmier', lastLogin: format(subDays(new Date(), 0), 'yyyy-MM-dd HH:mm') },
-  { id: 'USR004', name: 'Aissatou Diallo', email: 'a.diallo@mongo.health', role: 'Pharmacien', lastLogin: format(subDays(new Date(), 2), 'yyyy-MM-dd HH:mm') },
+  { id: 'USR001', name: 'Admin User', email: 'admin@mongo.health', role: 'Admin', lastLogin: '2024-07-29 10:30' },
+  { id: 'USR002', name: 'Dr. Khadija Cisse', email: 'k.cisse@mongo.health', role: 'Docteur', lastLogin: '2024-07-28 09:00' },
+  { id: 'USR003', name: 'Mamadou Ba', email: 'm.ba@mongo.health', role: 'Infirmier', lastLogin: '2024-07-29 08:45' },
+  { id: 'USR004', name: 'Aissatou Diallo', email: 'a.diallo@mongo.health', role: 'Pharmacien', lastLogin: '2024-07-27 14:00' },
 ];
 
 export const doctors = [
@@ -40,9 +40,9 @@ export const doctors = [
 ]
 
 export const labRequests: LabRequest[] = [
-  { id: 'LAB001', patientName: 'Aminata Sow', test: 'Hémogramme complet', requestDate: format(subDays(new Date(), 1), 'yyyy-MM-dd'), status: 'Terminé' },
-  { id: 'LAB002', patientName: 'Moussa Diop', test: 'Bilan lipidique', requestDate: format(subDays(new Date(), 0), 'yyyy-MM-dd'), status: 'En cours' },
-  { id: 'LAB003', patientName: 'Ibrahim Fall', test: 'HbA1c', requestDate: format(subDays(new Date(), 0), 'yyyy-MM-dd'), status: 'En attente' },
+  { id: 'LAB001', patientName: 'Aminata Sow', test: 'Hémogramme complet', requestDate: '2024-07-28', status: 'Terminé' },
+  { id: 'LAB002', patientName: 'Moussa Diop', test: 'Bilan lipidique', requestDate: '2024-07-29', status: 'En cours' },
+  { id: 'LAB003', patientName: 'Ibrahim Fall', test: 'HbA1c', requestDate: '2024-07-29', status: 'En attente' },
 ];
 
 export const emergencyTriage: EmergencyTriage[] = [
@@ -52,7 +52,7 @@ export const emergencyTriage: EmergencyTriage[] = [
 ];
 
 export const radiographyRequests: RadiographyRequest[] = [
-  { id: 'RAD001', patientName: 'Aminata Sow', examType: 'Radiographie pulmonaire', requestDate: format(subDays(new Date(), 2), 'yyyy-MM-dd'), status: 'En attente' },
-  { id: 'RAD002', patientName: 'Moussa Diop', examType: 'Scanner (CT)', requestDate: format(subDays(new Date(), 1), 'yyyy-MM-dd'), status: 'En cours' },
-  { id: 'RAD003', patientName: 'Fatima Gueye', examType: 'IRM', requestDate: format(subDays(new Date(), 1), 'yyyy-MM-dd'), status: 'Terminé' },
+  { id: 'RAD001', patientName: 'Aminata Sow', examType: 'Radiographie pulmonaire', requestDate: '2024-07-27', status: 'En attente' },
+  { id: 'RAD002', patientName: 'Moussa Diop', examType: 'Scanner (CT)', requestDate: '2024-07-28', status: 'En cours' },
+  { id: 'RAD003', patientName: 'Fatima Gueye', examType: 'IRM', requestDate: '2024-07-28', status: 'Terminé' },
 ];
