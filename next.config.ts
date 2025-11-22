@@ -2,10 +2,6 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  experimental: {
-    // This is to fix the Cross-Origin error in dev environments.
-    allowedDevOrigins: ["**."],
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
