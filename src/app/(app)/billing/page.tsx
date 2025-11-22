@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -21,8 +22,9 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { invoices as initialInvoices } from "@/lib/data";
+import { invoices as initialInvoices, patients } from "@/lib/data";
 import type { Invoice } from "@/lib/types";
+import { CreateInvoiceDialog } from "@/components/billing/create-invoice-dialog";
 
 const getStatusBadgeVariant = (status: Invoice['status']) => {
   switch (status) {
@@ -36,6 +38,7 @@ const getStatusBadgeVariant = (status: Invoice['status']) => {
 export default function BillingPage() {
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
   const { toast } = useToast();
+  const [isCreateInvoiceDialogOpen, setIsCreateInvoiceDialogOpen] = useState(false);
 
   const handleUpdateStatus = (invoiceId: string, status: Invoice['status']) => {
     setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, status } : inv));
@@ -43,6 +46,14 @@ export default function BillingPage() {
       title: "Statut de la facture mis à jour",
       description: `La facture ${invoiceId} est maintenant marquée comme "${status}".`,
     });
+  };
+  
+  const addInvoice = (newInvoiceData: Omit<Invoice, 'id'>) => {
+    const newInvoice: Invoice = {
+      ...newInvoiceData,
+      id: `INV${Date.now()}`,
+    };
+    setInvoices(prev => [newInvoice, ...prev]);
   };
 
   const handleViewDetails = (invoice: Invoice) => {
@@ -61,13 +72,14 @@ export default function BillingPage() {
   };
 
   return (
+    <>
     <div className="space-y-6">
        <div className="flex justify-between items-center">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">Facturation</h1>
                 <p className="text-muted-foreground">Gérez les factures et les paiements des patients.</p>
             </div>
-            <Button onClick={() => toast({ title: "Fonctionnalité à venir" })}>
+            <Button onClick={() => setIsCreateInvoiceDialogOpen(true)}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Créer une facture
             </Button>
@@ -126,5 +138,12 @@ export default function BillingPage() {
         </CardContent>
       </Card>
     </div>
+    <CreateInvoiceDialog
+        open={isCreateInvoiceDialogOpen}
+        onOpenChange={setIsCreateInvoiceDialogOpen}
+        patients={patients}
+        onInvoiceCreated={addInvoice}
+      />
+    </>
   );
 }
