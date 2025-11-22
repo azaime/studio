@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -23,7 +24,8 @@ import { MoreHorizontal, PlusCircle, Droplets } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { bloodUnits as initialBloodUnits } from "@/lib/data";
 import type { BloodUnit } from "@/lib/types";
-import { Progress } from "@/components/ui/progress";
+import { EditBloodUnitDialog } from "@/components/blood-bank/edit-blood-unit-dialog";
+import { AddBloodUnitDialog } from "@/components/blood-bank/add-blood-unit-dialog";
 
 const getStatusBadgeVariant = (status: BloodUnit['status']) => {
   switch (status) {
@@ -35,11 +37,23 @@ const getStatusBadgeVariant = (status: BloodUnit['status']) => {
   }
 };
 
-const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+export const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 export default function BloodBankPage() {
   const [bloodUnits, setBloodUnits] = useState<BloodUnit[]>(initialBloodUnits);
   const { toast } = useToast();
+  const [editingUnit, setEditingUnit] = useState<BloodUnit | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddUnitDialogOpen, setIsAddUnitDialogOpen] = useState(false);
+
+  const addBloodUnit = (newUnitData: Omit<BloodUnit, 'id' | 'status'>) => {
+    const newUnit: BloodUnit = {
+      ...newUnitData,
+      id: `BLD${Date.now()}`,
+      status: 'Disponible'
+    };
+    setBloodUnits(prev => [newUnit, ...prev].sort((a,b) => new Date(b.collectionDate).getTime() - new Date(a.collectionDate).getTime()));
+  };
 
   const handleUpdateStatus = (unitId: string, status: BloodUnit['status']) => {
     setBloodUnits(prev => prev.map(unit => unit.id === unitId ? { ...unit, status } : unit));
@@ -59,15 +73,28 @@ export default function BloodBankPage() {
   const getStockByGroup = (group: string) => {
       return bloodUnits.filter(u => u.bloodType === group && u.status === 'Disponible').length;
   }
+  
+  const handleOpenEditDialog = (unit: BloodUnit) => {
+    setEditingUnit(unit);
+    setIsEditDialogOpen(true);
+  }
+  
+  const handleDialogClose = (open: boolean) => {
+    setIsEditDialogOpen(open);
+    if (!open) {
+      setEditingUnit(null);
+    }
+  }
 
   return (
+    <>
     <div className="space-y-6">
         <div className="flex justify-between items-center">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">Banque de Sang</h1>
                 <p className="text-muted-foreground">Gérez l'inventaire des unités de sang.</p>
             </div>
-            <Button onClick={() => toast({ title: "Fonctionnalité à venir" })}>
+            <Button onClick={() => setIsAddUnitDialogOpen(true)}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Ajouter une unité
             </Button>
@@ -130,8 +157,7 @@ export default function BloodBankPage() {
                       <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => handleViewDetails(unit)}>Voir les détails</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(unit.id, 'Réservé')}>Réserver</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(unit.id, 'Utilisé')}>Marquer comme utilisé</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleOpenEditDialog(unit)}>Modifier</DropdownMenuItem>
                       </DropdownMenuContent>
                   </DropdownMenu>
                   </TableCell>
@@ -142,5 +168,17 @@ export default function BloodBankPage() {
         </CardContent>
       </Card>
     </div>
+    <AddBloodUnitDialog 
+        open={isAddUnitDialogOpen}
+        onOpenChange={setIsAddUnitDialogOpen}
+        onUnitAdded={addBloodUnit}
+    />
+     <EditBloodUnitDialog
+        open={isEditDialogOpen}
+        onOpenChange={handleDialogClose}
+        unit={editingUnit}
+        onUnitUpdated={handleUpdateStatus}
+      />
+    </>
   );
 }
