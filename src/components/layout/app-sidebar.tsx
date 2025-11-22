@@ -36,7 +36,9 @@ import {
   HeartPulse,
   UsersRound,
   Building,
-  User
+  User,
+  CreditCard,
+  Droplets
 } from "lucide-react"
 import { Button } from "../ui/button"
 
@@ -55,6 +57,8 @@ const navItems = [
   { href: "/surgery", icon: Scissors, label: "Chirurgie" },
   { href: "/radiography", icon: Scan, label: "Radiographie" },
   { href: "/ultrasound", icon: Radio, label: "Échographie" },
+  { href: "/billing", icon: CreditCard, label: "Facturation" },
+  { href: "/blood-bank", icon: Droplets, label: "Banque de Sang" },
   { href: "/users", icon: UserPlus, label: "Utilisateurs" },
   { href: "/personnel", icon: UsersRound, label: "Personnel" },
   { href: "/administration", icon: Building, label: "Administration" },

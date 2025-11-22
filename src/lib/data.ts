@@ -1,4 +1,4 @@
-import type { Patient, Appointment, Medication, User, LabRequest, EmergencyTriage, RadiographyRequest } from '@/lib/types';
+import type { Patient, Appointment, Medication, User, LabRequest, EmergencyTriage, RadiographyRequest, Invoice, BloodUnit } from '@/lib/types';
 import { subDays, format } from 'date-fns';
 
 export const patients: Patient[] = [
@@ -55,4 +55,19 @@ export const radiographyRequests: RadiographyRequest[] = [
   { id: 'RAD001', patientName: 'Aminata Sow', examType: 'Radiographie pulmonaire', requestDate: '2024-07-27', status: 'En attente' },
   { id: 'RAD002', patientName: 'Moussa Diop', examType: 'Scanner (CT)', requestDate: '2024-07-28', status: 'En cours' },
   { id: 'RAD003', patientName: 'Fatima Gueye', examType: 'IRM', requestDate: '2024-07-28', status: 'Terminé' },
+];
+
+export const invoices: Invoice[] = [
+    { id: 'INV001', patientName: 'Moussa Diop', amount: 75000, date: '2024-07-25', status: 'Payée' },
+    { id: 'INV002', patientName: 'Aminata Sow', amount: 120000, date: '2024-07-26', status: 'En attente' },
+    { id: 'INV003', patientName: 'Ibrahim Fall', amount: 45000, date: '2024-06-15', status: 'En retard' },
+];
+
+export const bloodUnits: BloodUnit[] = [
+    { id: 'BLD001', bloodType: 'O+', collectionDate: '2024-07-15', expiryDate: '2024-08-25', donorId: 'DON012', status: 'Disponible' },
+    { id: 'BLD002', bloodType: 'A+', collectionDate: '2024-07-18', expiryDate: '2024-08-28', donorId: 'DON013', status: 'Disponible' },
+    { id: 'BLD003', bloodType: 'B-', collectionDate: '2024-07-20', expiryDate: '2024-08-30', donorId: 'DON014', status: 'Réservé' },
+    { id: 'BLD004', bloodType: 'AB+', collectionDate: '2024-06-30', expiryDate: '2024-08-10', donorId: 'DON015', status: 'Expiré' },
+    { id: 'BLD005', bloodType: 'O-', collectionDate: '2024-07-22', expiryDate: '2024-09-01', donorId: 'DON016', status: 'Disponible' },
+    { id: 'BLD006', bloodType: 'O+', collectionDate: '2024-07-25', expiryDate: '2024-09-04', donorId: 'DON017', status: 'Utilisé' },
 ];

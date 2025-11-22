@@ -35,6 +35,8 @@ const pageTitles: { [key: string]: string } = {
   surgery: 'Chirurgie',
   radiography: 'Radiographie',
   ultrasound: 'Échographie',
+  billing: 'Facturation',
+  'blood-bank': 'Banque de Sang',
   users: 'Utilisateurs',
   medicine: 'Médecine',
   personnel: 'Personnel',
@@ -51,7 +53,7 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 export function Header() {
   const pathname = usePathname();
   const pageKey = pathname.split('/').pop() || 'dashboard';
-  const title = pageTitles[pageKey] || capitalize(pageKey);
+  const title = pageTitles[pageKey] || capitalize(pageKey.replace('-', ' '));
 
   return (
     <header className="flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6 sticky top-0 z-30">

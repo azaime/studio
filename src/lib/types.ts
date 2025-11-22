@@ -74,3 +74,20 @@ export type UpcomingDelivery = {
     term: string;
     status: "Programmé" | "Observation" | "Admis";
 };
+
+export type Invoice = {
+  id: string;
+  patientName: string;
+  amount: number;
+  date: string;
+  status: 'Payée' | 'En attente' | 'En retard';
+};
+
+export type BloodUnit = {
+  id: string;
+  bloodType: string;
+  collectionDate: string;
+  expiryDate: string;
+  donorId: string;
+  status: 'Disponible' | 'Réservé' | 'Utilisé' | 'Expiré';
+};
