@@ -23,8 +23,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { invoices as initialInvoices, patients } from "@/lib/data";
-import type { Invoice } from "@/lib/types";
+import type { Invoice, Patient } from "@/lib/types";
 import { CreateInvoiceDialog } from "@/components/billing/create-invoice-dialog";
+import { EditInvoiceDialog } from "@/components/billing/edit-invoice-dialog";
 
 const getStatusBadgeVariant = (status: Invoice['status']) => {
   switch (status) {
@@ -39,6 +40,8 @@ export default function BillingPage() {
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
   const { toast } = useToast();
   const [isCreateInvoiceDialogOpen, setIsCreateInvoiceDialogOpen] = useState(false);
+  const [isEditInvoiceDialogOpen, setIsEditInvoiceDialogOpen] = useState(false);
+  const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
 
   const handleUpdateStatus = (invoiceId: string, status: Invoice['status']) => {
     setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, status } : inv));
@@ -55,6 +58,19 @@ export default function BillingPage() {
     };
     setInvoices(prev => [newInvoice, ...prev]);
   };
+  
+  const updateInvoice = (updatedInvoice: Invoice) => {
+    setInvoices(prev => prev.map(inv => inv.id === updatedInvoice.id ? updatedInvoice : inv));
+    toast({
+      title: "Facture mise à jour",
+      description: `La facture ${updatedInvoice.id} a été mise à jour.`,
+    });
+  }
+
+  const handleOpenEditDialog = (invoice: Invoice) => {
+    setEditingInvoice(invoice);
+    setIsEditInvoiceDialogOpen(true);
+  }
 
   const handleViewDetails = (invoice: Invoice) => {
     toast({
@@ -126,6 +142,7 @@ export default function BillingPage() {
                       <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => handleViewDetails(invoice)}>Voir les détails</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleOpenEditDialog(invoice)}>Modifier</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleDownload(invoice)}>Télécharger en PDF</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleUpdateStatus(invoice.id, 'Payée')}>Marquer comme payée</DropdownMenuItem>
                       </DropdownMenuContent>
@@ -144,6 +161,13 @@ export default function BillingPage() {
         patients={patients}
         onInvoiceCreated={addInvoice}
       />
+    <EditInvoiceDialog
+        open={isEditInvoiceDialogOpen}
+        onOpenChange={setIsEditInvoiceDialogOpen}
+        patients={patients}
+        onInvoiceUpdated={updateInvoice}
+        invoice={editingInvoice}
+    />
     </>
   );
 }
