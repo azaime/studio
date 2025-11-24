@@ -55,6 +55,7 @@ const navItems = [
   { href: "/ent", icon: Ear, label: "ORL" },
   { href: "/ophthalmology", icon: Eye, label: "Ophtalmologie" },
   { href: "/surgery", icon: Scissors, label: "Chirurgie" },
+  { href: "/bloc", icon: Scissors, label: "Bloc" },
   { href: "/radiography", icon: Scan, label: "Radiographie" },
   { href: "/ultrasound", icon: Radio, label: "Échographie" },
   { href: "/billing", icon: CreditCard, label: "Facturation" },

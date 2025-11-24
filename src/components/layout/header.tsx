@@ -33,6 +33,7 @@ const pageTitles: { [key: string]: string } = {
   ent: 'ORL',
   ophthalmology: 'Ophtalmologie',
   surgery: 'Chirurgie',
+  bloc: 'Bloc Opératoire',
   radiography: 'Radiographie',
   ultrasound: 'Échographie',
   billing: 'Facturation',
