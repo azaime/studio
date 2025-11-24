@@ -25,26 +25,62 @@ type PlannedSurgery = typeof plannedSurgeriesData[0];
 
 export default function BlocPage() {
   const [isScheduling, setIsScheduling] = useState(false);
+  const [editingSurgery, setEditingSurgery] = useState<Appointment | null>(null);
   const [patients, setPatients] = useState<Patient[]>(initialPatients);
   const [plannedSurgeries, setPlannedSurgeries] = useState(plannedSurgeriesData);
   const { toast } = useToast();
 
-  const handleSurgeryScheduled = (newSurgery: Omit<Appointment, 'id' | 'status'>) => {
-    const surgeryEntry: PlannedSurgery = {
-        id: `SURG-${Date.now()}`,
-        patientName: newSurgery.patientName,
-        patientId: newSurgery.patientId,
-        surgery: newSurgery.service, // Using service as surgery type
-        date: newSurgery.date,
-        time: newSurgery.time,
-        doctorName: newSurgery.doctorName,
-        status: 'Planifiée'
+  const handleOpenCreateDialog = () => {
+    setEditingSurgery(null);
+    setIsScheduling(true);
+  };
+
+  const handleOpenEditDialog = (surgery: PlannedSurgery) => {
+    const appointmentToEdit: Appointment = {
+      id: surgery.id,
+      patientId: surgery.patientId,
+      patientName: surgery.patientName,
+      doctorName: surgery.doctorName,
+      service: surgery.surgery,
+      date: surgery.date,
+      time: surgery.time,
+      status: 'Programmé' // Status from Appointment type
     };
-    setPlannedSurgeries(prev => [surgeryEntry, ...prev]);
-    toast({
-      title: "Intervention planifiée",
-      description: `L'intervention pour ${newSurgery.patientName} a été ajoutée.`,
-    });
+    setEditingSurgery(appointmentToEdit);
+    setIsScheduling(true);
+  };
+  
+  const handleDialogClose = (open: boolean) => {
+    if (!open) {
+      setEditingSurgery(null);
+    }
+    setIsScheduling(open);
+  };
+
+  const handleSurgeryScheduled = (newSurgery: Omit<Appointment, 'id' | 'status'> & { id?: string }) => {
+     if (editingSurgery) { // Editing
+      setPlannedSurgeries(prev => prev.map(s => s.id === editingSurgery.id ? { ...s, patientName: newSurgery.patientName, patientId: newSurgery.patientId, surgery: newSurgery.service, date: newSurgery.date, time: newSurgery.time, doctorName: newSurgery.doctorName } : s));
+      toast({
+        title: "Intervention mise à jour",
+        description: `L'intervention pour ${newSurgery.patientName} a été mise à jour.`,
+      });
+    } else { // Creating
+      const surgeryEntry: PlannedSurgery = {
+          id: `SURG-${Date.now()}`,
+          patientName: newSurgery.patientName,
+          patientId: newSurgery.patientId,
+          surgery: newSurgery.service,
+          date: newSurgery.date,
+          time: newSurgery.time,
+          doctorName: newSurgery.doctorName,
+          status: 'Planifiée'
+      };
+      setPlannedSurgeries(prev => [surgeryEntry, ...prev]);
+      toast({
+        title: "Intervention planifiée",
+        description: `L'intervention pour ${newSurgery.patientName} a été ajoutée.`,
+      });
+    }
   };
 
   const handleUpdateStatus = (surgeryId: string) => {
@@ -70,7 +106,7 @@ export default function BlocPage() {
                   <h1 className="text-2xl font-bold tracking-tight">Bloc Opératoire</h1>
                   <p className="text-muted-foreground">Planification et gestion des interventions chirurgicales.</p>
               </div>
-              <Button onClick={() => setIsScheduling(true)}>
+              <Button onClick={handleOpenCreateDialog}>
                   <PlusCircle className="mr-2 h-4 w-4" />
                   Planifier une intervention
               </Button>
@@ -115,6 +151,7 @@ export default function BlocPage() {
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                             <DropdownMenuItem onClick={() => handleViewDetails(surgery)}>Voir les détails</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleOpenEditDialog(surgery)}>Modifier</DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleUpdateStatus(surgery.id)}>
                                                 {surgery.status === 'Planifiée' ? "Marquer comme terminée" : "Marquer comme planifiée"}
                                             </DropdownMenuItem>
@@ -130,12 +167,12 @@ export default function BlocPage() {
       </div>
        <ScheduleAppointmentDialog
         open={isScheduling}
-        onOpenChange={setIsScheduling}
+        onOpenChange={handleDialogClose}
         patients={patients}
         doctors={doctors}
         onAppointmentScheduled={handleSurgeryScheduled}
+        appointment={editingSurgery || undefined}
       />
     </>
   );
 }
-
